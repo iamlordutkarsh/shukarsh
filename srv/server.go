@@ -179,12 +179,43 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	// Build featured products for hero carousel (bestsellers + new arrivals, deduplicated)
+	featuredMap := map[int64]bool{}
+	var featured []dbgen.Product
+	for _, p := range bestSellers {
+		if !featuredMap[p.ID] {
+			featuredMap[p.ID] = true
+			featured = append(featured, p)
+		}
+	}
+	for _, p := range newArrivals {
+		if !featuredMap[p.ID] {
+			featuredMap[p.ID] = true
+			featured = append(featured, p)
+		}
+	}
+	// If fewer than 4 featured, pad with recent products
+	for _, p := range products {
+		if len(featured) >= 5 {
+			break
+		}
+		if !featuredMap[p.ID] {
+			featuredMap[p.ID] = true
+			featured = append(featured, p)
+		}
+	}
+	// Cap at 5 featured products (6 slides total with welcome)
+	if len(featured) > 5 {
+		featured = featured[:5]
+	}
+
 	tmpl.Execute(w, map[string]any{
 		"Products":    products,
 		"Categories":  catOrder,
 		"ByCategory":  catMap,
 		"NewArrivals": newArrivals,
 		"BestSellers": bestSellers,
+		"Featured":    featured,
 	})
 }
 

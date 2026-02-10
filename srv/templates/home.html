@@ -77,16 +77,77 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 .cat-name{font-size:.72rem;font-weight:700;color:var(--textl);max-width:85px;transition:color .3s}
 .cat-bubble:hover .cat-name,.cat-bubble.active .cat-name{color:var(--lavd)}
 
-/* HERO BANNER */
-.hero-banner{position:relative;background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg));padding:55px 40px;text-align:center;overflow:hidden;margin:0 auto;max-width:1300px;border-radius:0 0 30px 30px}
-.hero-banner::before{content:'';position:absolute;top:-50px;right:-50px;width:300px;height:300px;background:var(--lav);border-radius:50%;opacity:.15}
-.hero-banner::after{content:'';position:absolute;bottom:-80px;left:-60px;width:250px;height:250px;background:var(--lavd);border-radius:50%;opacity:.1}
-.hero-banner h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);position:relative;z-index:1;line-height:1.2}
-.hero-banner h1 em{font-family:'Satisfy',cursive;color:var(--lavd);font-style:normal}
-.hero-banner p{color:var(--textl);margin-top:8px;position:relative;z-index:1;font-size:1rem}
+/* HERO CAROUSEL */
+.hero-carousel{position:relative;max-width:1300px;margin:0 auto;border-radius:0 0 30px 30px;overflow:hidden;background:var(--lavl)}
+.hero-track{display:flex;transition:transform .6s cubic-bezier(.22,1,.36,1);will-change:transform}
+.hero-slide{min-width:100%;position:relative;overflow:hidden}
+
+/* Welcome slide */
+.hero-slide--welcome{background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg));padding:55px 40px;text-align:center}
+.hero-slide--welcome::before{content:'';position:absolute;top:-50px;right:-50px;width:300px;height:300px;background:var(--lav);border-radius:50%;opacity:.15}
+.hero-slide--welcome::after{content:'';position:absolute;bottom:-80px;left:-60px;width:250px;height:250px;background:var(--lavd);border-radius:50%;opacity:.1}
+.hero-slide--welcome h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);position:relative;z-index:1;line-height:1.2}
+.hero-slide--welcome h1 em{font-family:'Satisfy',cursive;color:var(--lavd);font-style:normal}
+.hero-slide--welcome p{color:var(--textl);margin-top:8px;position:relative;z-index:1;font-size:1rem}
 .hero-stats{display:flex;justify-content:center;gap:40px;margin-top:24px;position:relative;z-index:1}
 .hero-stat strong{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--lavd);display:block}
 .hero-stat small{font-size:.7rem;color:var(--textl);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+/* Product slides */
+.hero-slide--product{display:flex;align-items:center;padding:40px 60px;gap:50px;min-height:280px;cursor:pointer;text-decoration:none;color:inherit}
+.hero-slide--product .slide-img-wrap{flex:0 0 220px;height:220px;border-radius:24px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.12);position:relative;z-index:1}
+.hero-slide--product .slide-img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.hero-slide--product:hover .slide-img{transform:scale(1.06)}
+.hero-slide--product .slide-info{flex:1;position:relative;z-index:1}
+.hero-slide--product .slide-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#fff;margin-bottom:12px}
+.hero-slide--product .slide-badge.new{background:linear-gradient(135deg,#c9b3e8,#a78bca)}
+.hero-slide--product .slide-badge.best{background:linear-gradient(135deg,#f59e42,#e67e22)}
+.hero-slide--product .slide-badge.feat{background:linear-gradient(135deg,#e8b3d1,#ca7eb5)}
+.hero-slide--product .slide-title{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,3vw,2.4rem);line-height:1.25;margin-bottom:8px}
+.hero-slide--product .slide-cat{font-size:.82rem;color:var(--textl);font-weight:600;margin-bottom:14px}
+.hero-slide--product .slide-price{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--lavd);margin-bottom:16px}
+.hero-slide--product .slide-price .old{font-size:1rem;color:#ccc;text-decoration:line-through;margin-left:8px;font-family:'Nunito',sans-serif;font-weight:400}
+.hero-slide--product .slide-cta{display:inline-block;padding:12px 32px;background:var(--lavd);color:#fff;border-radius:25px;font-weight:700;font-size:.9rem;letter-spacing:.5px;transition:all .3s;box-shadow:0 4px 15px rgba(169,139,202,.3)}
+.hero-slide--product .slide-cta:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(169,139,202,.4)}
+
+/* Slide backgrounds - alternate gradients */
+.hero-slide--product:nth-child(2){background:linear-gradient(135deg,#f0eaf8,#e8ddf5,#faf0e4)}
+.hero-slide--product:nth-child(3){background:linear-gradient(135deg,#fce4ec,#f3e5f5,#faf0e4)}
+.hero-slide--product:nth-child(4){background:linear-gradient(135deg,#e8f5e9,#e0f2f1,#faf0e4)}
+.hero-slide--product:nth-child(5){background:linear-gradient(135deg,#fff3e0,#fce4ec,#faf0e4)}
+.hero-slide--product:nth-child(6){background:linear-gradient(135deg,#e3f2fd,#e8eaf6,#faf0e4)}
+.hero-slide--product:nth-child(7){background:linear-gradient(135deg,#fce4ec,#f8bbd0,#faf0e4)}
+[data-theme="dark"] .hero-slide--product:nth-child(2){background:linear-gradient(135deg,#251a38,#2d2045,#1a1225)}
+[data-theme="dark"] .hero-slide--product:nth-child(3){background:linear-gradient(135deg,#2a1525,#2d2045,#1a1225)}
+[data-theme="dark"] .hero-slide--product:nth-child(4){background:linear-gradient(135deg,#1a2520,#1a2a28,#1a1225)}
+[data-theme="dark"] .hero-slide--product:nth-child(5){background:linear-gradient(135deg,#2a2015,#2a1525,#1a1225)}
+[data-theme="dark"] .hero-slide--product:nth-child(6){background:linear-gradient(135deg,#152030,#1a1a30,#1a1225)}
+[data-theme="dark"] .hero-slide--product:nth-child(7){background:linear-gradient(135deg,#2a1525,#301525,#1a1225)}
+
+/* Decorative blobs on product slides */
+.hero-slide--product::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:var(--lav);border-radius:50%;opacity:.1}
+.hero-slide--product::after{content:'';position:absolute;bottom:-60px;left:20%;width:180px;height:180px;background:var(--lavd);border-radius:50%;opacity:.06}
+
+/* Carousel controls */
+.hero-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:10;width:44px;height:44px;border:none;border-radius:50%;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);color:var(--lavd);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.hero-arrow:hover{background:var(--lavd);color:#fff;transform:translateY(-50%) scale(1.1);box-shadow:0 4px 20px rgba(169,139,202,.3)}
+.hero-arrow--prev{left:16px}
+.hero-arrow--next{right:16px}
+[data-theme="dark"] .hero-arrow{background:rgba(45,32,69,.85);color:var(--lavd)}
+[data-theme="dark"] .hero-arrow:hover{background:var(--lavd);color:#fff}
+
+/* Dots */
+.hero-dots{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10}
+.hero-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.5);border:none;cursor:pointer;transition:all .3s;padding:0}
+.hero-dot.active{background:var(--lavd);width:28px;border-radius:5px}
+[data-theme="dark"] .hero-dot{background:rgba(255,255,255,.2)}
+[data-theme="dark"] .hero-dot.active{background:var(--lavd)}
+
+/* Progress bar */
+.hero-progress{position:absolute;bottom:0;left:0;height:3px;background:var(--lavd);z-index:10;transition:width linear}
+
+/* Pause on hover indicator */
+.hero-carousel:hover .hero-progress{opacity:.5}
 
 /* SECTION */
 .section{max-width:1300px;margin:0 auto;padding:50px 40px}
@@ -132,14 +193,19 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 @keyframes bubbleIn{from{opacity:0;transform:translateY(15px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 
 /* Hero text animation */
-.hero-banner h1{animation:heroSlide .8s .2s both}
-.hero-banner p{animation:heroSlide .8s .35s both}
+.hero-slide--welcome h1{animation:heroSlide .8s .2s both}
+.hero-slide--welcome p{animation:heroSlide .8s .35s both}
 .hero-stats{animation:heroSlide .8s .5s both}
 @keyframes heroSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 /* Pulse on stat numbers */
 .hero-stat strong{animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* Slide content entrance animations */
+.hero-slide--product .slide-img-wrap{opacity:0;transform:translateX(-30px);transition:all .6s .2s cubic-bezier(.22,1,.36,1)}
+.hero-slide--product .slide-info{opacity:0;transform:translateX(30px);transition:all .6s .3s cubic-bezier(.22,1,.36,1)}
+.hero-slide--product.active .slide-img-wrap,.hero-slide--product.active .slide-info{opacity:1;transform:translateX(0)}
 
 /* Wiggle on badge hover */
 .badge:hover{animation:wiggle .4s}
@@ -191,8 +257,21 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .empty{text-align:center;padding:80px 24px}
 .empty h3{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px}
 
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}}
-@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.section{padding:30px 16px}.cat-row{gap:14px;padding:0 16px;justify-content:flex-start;flex-wrap:nowrap;width:max-content}.cat-circle{width:65px;height:65px;font-size:1.4rem}.hero-banner{padding:35px 16px;border-radius:0 0 20px 20px}.card{border-radius:16px}.card-body{padding:12px 14px}.card-title{font-size:.8rem;min-height:2.2em}.card-link{padding:7px 16px;font-size:.7rem}.section-header{flex-direction:column;gap:10px;align-items:flex-start}}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}.hero-slide--product{padding:30px 40px;gap:30px}.hero-slide--product .slide-img-wrap{flex:0 0 180px;height:180px}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.section{padding:30px 16px}.cat-row{gap:14px;padding:0 16px;justify-content:flex-start;flex-wrap:nowrap;width:max-content}.cat-circle{width:65px;height:65px;font-size:1.4rem}.card{border-radius:16px}.card-body{padding:12px 14px}.card-title{font-size:.8rem;min-height:2.2em}.card-link{padding:7px 16px;font-size:.7rem}.section-header{flex-direction:column;gap:10px;align-items:flex-start}
+.hero-carousel{border-radius:0 0 20px 20px}
+.hero-slide--welcome{padding:35px 16px}
+.hero-slide--product{flex-direction:column;padding:24px 20px;gap:16px;text-align:center}
+.hero-slide--product .slide-img-wrap{flex:0 0 160px;width:160px;height:160px;margin:0 auto}
+.hero-slide--product .slide-title{font-size:1.2rem}
+.hero-slide--product .slide-price{font-size:1.4rem}
+.hero-slide--product .slide-cta{padding:10px 24px;font-size:.8rem}
+.hero-arrow{width:36px;height:36px;font-size:1rem}
+.hero-arrow--prev{left:8px}
+.hero-arrow--next{right:8px}
+.hero-stats{gap:16px;flex-wrap:wrap}
+.hero-stat strong{font-size:1.3rem}
+}
 </style>
 </head>
 <body>
@@ -236,16 +315,45 @@ footer{background:var(--lavl);padding:50px 40px 24px}
   </div>
 </div>
 
-<!-- HERO -->
-<div class="hero-banner reveal">
-  <h1>Welcome to <em>Shukarsh</em></h1>
-  <p>Your go-to destination for quality products at best prices 💜</p>
-  <div class="hero-stats">
-    <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
-    <div class="hero-stat"><strong>3.9★</strong><small>Rating</small></div>
-    <div class="hero-stat"><strong>128+</strong><small>Reviews</small></div>
-    <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
+<!-- HERO CAROUSEL -->
+<div class="hero-carousel" id="heroCarousel">
+  <div class="hero-track" id="heroTrack">
+    <!-- Slide 0: Welcome -->
+    <div class="hero-slide hero-slide--welcome">
+      <h1>Welcome to <em>Shukarsh</em></h1>
+      <p>Your go-to destination for quality products at best prices 💜</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
+        <div class="hero-stat"><strong>3.9★</strong><small>Rating</small></div>
+        <div class="hero-stat"><strong>128+</strong><small>Reviews</small></div>
+        <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
+      </div>
+    </div>
+    <!-- Product slides -->
+    {{range $i, $p := .Featured}}
+    <a href="/product/{{$p.ID}}" class="hero-slide hero-slide--product">
+      <div class="slide-img-wrap">
+        <img src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" class="slide-img" loading="lazy">
+      </div>
+      <div class="slide-info">
+        {{if $p.IsBestseller}}<span class="slide-badge best">🔥 Best Seller</span>
+        {{else if $p.IsNew}}<span class="slide-badge new">✨ New Arrival</span>
+        {{else}}<span class="slide-badge feat">💜 Featured</span>{{end}}
+        <div class="slide-title">{{$p.Title}}</div>
+        <div class="slide-cat">{{$p.Category}}</div>
+        <div class="slide-price">{{$p.Price}}{{if $p.OriginalPrice}} <span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>
+        <span class="slide-cta">View Product →</span>
+      </div>
+    </a>
+    {{end}}
   </div>
+  <!-- Arrows -->
+  <button class="hero-arrow hero-arrow--prev" onclick="heroSlide(-1)" aria-label="Previous">❮</button>
+  <button class="hero-arrow hero-arrow--next" onclick="heroSlide(1)" aria-label="Next">❯</button>
+  <!-- Dots -->
+  <div class="hero-dots" id="heroDots"></div>
+  <!-- Progress bar -->
+  <div class="hero-progress" id="heroProgress"></div>
 </div>
 
 <!-- NEW ARRIVALS -->
@@ -359,6 +467,77 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 </footer>
 
 <script>
+// ===== HERO CAROUSEL =====
+(function(){
+  const track=document.getElementById('heroTrack');
+  const dotsWrap=document.getElementById('heroDots');
+  const progress=document.getElementById('heroProgress');
+  const slides=track.querySelectorAll('.hero-slide');
+  const total=slides.length;
+  let current=0, autoTimer=null, progressTimer=null;
+  const AUTO_DELAY=5000;
+
+  // Build dots
+  for(let i=0;i<total;i++){
+    const d=document.createElement('button');
+    d.className='hero-dot'+(i===0?' active':'');
+    d.setAttribute('aria-label','Slide '+(i+1));
+    d.onclick=()=>goTo(i);
+    dotsWrap.appendChild(d);
+  }
+
+  function goTo(idx,fromUser){
+    current=((idx%total)+total)%total;
+    track.style.transform='translateX(-'+current*100+'%)';
+    // Update dots
+    dotsWrap.querySelectorAll('.hero-dot').forEach((d,i)=>d.classList.toggle('active',i===current));
+    // Animate product slide content
+    slides.forEach((s,i)=>s.classList.toggle('active',i===current));
+    // Reset auto if user interacted
+    if(fromUser) startAuto();
+    startProgress();
+  }
+
+  function startProgress(){
+    if(progressTimer) cancelAnimationFrame(progressTimer);
+    const start=performance.now();
+    progress.style.width='0%';
+    function tick(now){
+      const elapsed=now-start;
+      const pct=Math.min(elapsed/AUTO_DELAY*100,100);
+      progress.style.width=pct+'%';
+      if(pct<100) progressTimer=requestAnimationFrame(tick);
+    }
+    progressTimer=requestAnimationFrame(tick);
+  }
+
+  function startAuto(){
+    clearInterval(autoTimer);
+    autoTimer=setInterval(()=>goTo(current+1),AUTO_DELAY);
+  }
+
+  // Pause on hover
+  const carousel=document.getElementById('heroCarousel');
+  carousel.addEventListener('mouseenter',()=>{clearInterval(autoTimer);if(progressTimer)cancelAnimationFrame(progressTimer)});
+  carousel.addEventListener('mouseleave',()=>{startAuto();startProgress()});
+
+  // Swipe support
+  let touchX=0;
+  carousel.addEventListener('touchstart',e=>{touchX=e.touches[0].clientX},{passive:true});
+  carousel.addEventListener('touchend',e=>{
+    const diff=touchX-e.changedTouches[0].clientX;
+    if(Math.abs(diff)>40) goTo(current+(diff>0?1:-1),true);
+  },{passive:true});
+
+  // Global function for arrow buttons
+  window.heroSlide=function(dir){goTo(current+dir,true)};
+
+  // Init
+  slides[0].classList.add('active');
+  startAuto();
+  startProgress();
+})();
+
 // Nav scroll
 const nav=document.getElementById('nav'),st=document.getElementById('scrollTop');
 window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>50);st.classList.toggle('show',scrollY>400)});
