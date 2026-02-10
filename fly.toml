@@ -1,0 +1,27 @@
+# Fly.io configuration for Shukarsh Enterprises
+# Deploy: fly launch --copy-config --yes && fly deploy
+
+app = "shukarsh"
+primary_region = "bom"  # Mumbai, India
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DB_PATH = "/data/db.sqlite3"
+  UPLOADS_DIR = "/data/uploads"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[mounts]
+  source = "shukarsh_data"
+  destination = "/data"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

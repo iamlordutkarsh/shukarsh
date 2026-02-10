@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	flagListenAddr  = flag.String("listen", ":8000", "address to listen on")
-	flagAdminPass   = flag.String("admin-password", "", "admin panel password (or ADMIN_PASSWORD env var)")
+	flagListenAddr = flag.String("listen", ":8000", "address to listen on")
+	flagAdminPass  = flag.String("admin-password", "", "admin panel password (or ADMIN_PASSWORD env var)")
+	flagDBPath     = flag.String("db", "db.sqlite3", "database file path (or DB_PATH env var)")
 )
 
 func main() {
@@ -29,7 +30,11 @@ func run() error {
 	if adminPass == "" {
 		adminPass = os.Getenv("ADMIN_PASSWORD")
 	}
-	server, err := srv.New("db.sqlite3", hostname, adminPass)
+	dbPath := *flagDBPath
+	if p := os.Getenv("DB_PATH"); p != "" {
+		dbPath = p
+	}
+	server, err := srv.New(dbPath, hostname, adminPass)
 	if err != nil {
 		return fmt.Errorf("create server: %w", err)
 	}

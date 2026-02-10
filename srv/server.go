@@ -35,6 +35,9 @@ func New(dbPath, hostname, adminPassword string) (*Server, error) {
 	_, thisFile, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(thisFile)
 	uploadsDir := filepath.Join(filepath.Dir(baseDir), "uploads")
+	if d := os.Getenv("UPLOADS_DIR"); d != "" {
+		uploadsDir = d
+	}
 	os.MkdirAll(uploadsDir, 0755)
 	srv := &Server{
 		Hostname:      hostname,

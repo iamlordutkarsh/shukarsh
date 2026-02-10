@@ -1,0 +1,9 @@
+*.sqlite3
+db.sqlite3*
+shukarsh-server
+.git
+.gitignore
+uploads/
+README.md
+AGENTS.md
+srv.service
