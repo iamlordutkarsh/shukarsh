@@ -3,16 +3,11 @@ services:
     name: shukarsh
     runtime: docker
     region: singapore
-    plan: starter
     dockerfilePath: ./Dockerfile
-    disk:
-      name: shukarsh-data
-      mountPath: /data
-      sizeGB: 1
     envVars:
       - key: DB_PATH
         value: /data/db.sqlite3
       - key: UPLOADS_DIR
         value: /data/uploads
       - key: ADMIN_PASSWORD
-        generateValue: true
+        sync: false
