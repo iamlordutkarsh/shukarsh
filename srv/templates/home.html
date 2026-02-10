@@ -39,16 +39,17 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 /* CATEGORY BUBBLES */
 .cat-bubbles{background:var(--bg2);padding:30px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .cat-bubbles::-webkit-scrollbar{display:none}
-.cat-row{display:flex;gap:28px;padding:0 40px;width:max-content}
-.cat-bubble{text-align:center;cursor:pointer;transition:transform .3s}
-.cat-bubble:hover{transform:translateY(-4px)}
-.cat-circle{width:90px;height:90px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 8px;transition:all .3s;border:3px solid transparent}
-.cat-bubble:hover .cat-circle{border-color:var(--lavd);background:var(--white)}
-.cat-bubble.active .cat-circle{border-color:var(--lavd);background:var(--white);box-shadow:0 4px 15px rgba(169,139,202,.25)}
-.cat-name{font-size:.75rem;font-weight:700;color:var(--textl);max-width:90px}
+.cat-row{display:flex;gap:24px;padding:0 40px;justify-content:center;flex-wrap:wrap}
+.cat-bubble{text-align:center;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1)}
+.cat-bubble:hover{transform:translateY(-6px)}
+.cat-circle{width:85px;height:85px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 8px;transition:all .4s cubic-bezier(.22,1,.36,1);border:3px solid transparent;box-shadow:0 4px 12px rgba(169,139,202,.1)}
+.cat-bubble:hover .cat-circle{border-color:var(--lavd);background:var(--white);transform:scale(1.08);box-shadow:0 8px 25px rgba(169,139,202,.2)}
+.cat-bubble.active .cat-circle{border-color:var(--lavd);background:var(--white);box-shadow:0 6px 20px rgba(169,139,202,.25);transform:scale(1.05)}
+.cat-name{font-size:.72rem;font-weight:700;color:var(--textl);max-width:85px;transition:color .3s}
+.cat-bubble:hover .cat-name,.cat-bubble.active .cat-name{color:var(--lavd)}
 
 /* HERO BANNER */
-.hero-banner{position:relative;background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg));padding:60px 40px;text-align:center;overflow:hidden}
+.hero-banner{position:relative;background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg));padding:55px 40px;text-align:center;overflow:hidden;margin:0 auto;max-width:1300px;border-radius:0 0 30px 30px}
 .hero-banner::before{content:'';position:absolute;top:-50px;right:-50px;width:300px;height:300px;background:var(--lav);border-radius:50%;opacity:.15}
 .hero-banner::after{content:'';position:absolute;bottom:-80px;left:-60px;width:250px;height:250px;background:var(--lavd);border-radius:50%;opacity:.1}
 .hero-banner h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);position:relative;z-index:1;line-height:1.2}
@@ -62,34 +63,71 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 .section{max-width:1300px;margin:0 auto;padding:50px 40px}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
 .section-title{font-family:'DM Serif Display',serif;font-size:1.8rem}
-.view-all{padding:10px 24px;background:var(--lav);color:var(--white);border-radius:8px;font-size:.8rem;font-weight:700;transition:all .3s}
-.view-all:hover{background:var(--lavd);transform:translateY(-2px)}
+.view-all{padding:10px 26px;background:var(--lavl);color:var(--lavd);border-radius:25px;font-size:.8rem;font-weight:700;transition:all .4s;border:2px solid var(--lav)}
+.view-all:hover{background:var(--lavd);color:var(--white);transform:translateY(-3px);box-shadow:0 6px 20px rgba(169,139,202,.25)}
 
 /* PRODUCT GRID */
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.card{background:var(--white);border-radius:var(--r);overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);cursor:pointer}
-.card:hover{transform:translateY(-6px);box-shadow:0 12px 35px rgba(0,0,0,.08)}
-.card-img-wrap{position:relative;overflow:hidden;background:var(--lavp)}
-.card-img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .5s}
-.card:hover .card-img{transform:scale(1.06)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.card{background:var(--white);border-radius:20px;overflow:hidden;transition:all .45s cubic-bezier(.22,1,.36,1);cursor:pointer;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 16px 40px rgba(169,139,202,.18)}
+.card-img-wrap{position:relative;overflow:hidden;background:var(--lavp);border-radius:20px 20px 0 0}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.card:hover .card-img{transform:scale(1.08)}
 .card-ph{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--lavl),var(--bg2));display:flex;align-items:center;justify-content:center;font-size:3rem}
-.card-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:6px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white)}
-.card-badge.meesho{background:var(--lavd)}
-.card-badge.amazon{background:#ff9900}
-.card-badge.flipkart{background:#2874f0}
-.card-body{padding:14px 16px;text-align:center}
-.card-title{font-size:.88rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:2.4em}
-.card-price{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--text)}
-.card-price .old{font-size:.8rem;color:#bbb;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif;font-weight:400}
-.card-link{display:inline-block;margin-top:10px;padding:8px 20px;border:2px solid var(--lav);border-radius:8px;font-size:.72rem;font-weight:700;color:var(--lavd);letter-spacing:.5px;transition:all .3s}
-.card-link:hover{background:var(--lav);color:var(--white)}
+.card-badge{position:absolute;top:12px;left:12px;padding:5px 12px;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white);backdrop-filter:blur(4px)}
+.card-badge.meesho{background:rgba(167,139,202,.85)}
+.card-badge.amazon{background:rgba(255,153,0,.85)}
+.card-badge.flipkart{background:rgba(40,116,240,.85)}
+.card-wishlist{position:absolute;top:12px;right:12px;width:34px;height:34px;background:rgba(255,255,255,.85);backdrop-filter:blur(4px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;transition:all .3s;opacity:0;transform:scale(.8)}
+.card:hover .card-wishlist{opacity:1;transform:scale(1)}
+.card-wishlist:hover{background:var(--lavd);color:var(--white);transform:scale(1.15)!important}
+.card-body{padding:16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.card-title{font-size:.88rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;min-height:2.5em}
+.card-price{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--lavd)}
+.card-price .old{font-size:.8rem;color:#ccc;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif;font-weight:400}
+.card-link{display:inline-block;margin-top:12px;padding:9px 22px;background:var(--lavl);border:none;border-radius:20px;font-size:.75rem;font-weight:700;color:var(--lavd);letter-spacing:.5px;transition:all .3s}
+.card-link:hover{background:var(--lavd);color:var(--white);transform:scale(1.05);box-shadow:0 4px 15px rgba(169,139,202,.3)}
 
-/* REVEAL */
-.reveal{opacity:0;transform:translateY(25px);transition:opacity .6s ease,transform .6s ease}
+/* REVEAL + ANIMATIONS */
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
 .reveal.show{opacity:1;transform:translateY(0)}
+.card.reveal{transition-delay:calc(var(--i,0) * 80ms)}
+
+/* Floating animation for bubbles */
+.cat-bubble:nth-child(1){animation:bubbleIn .5s .1s both}
+.cat-bubble:nth-child(2){animation:bubbleIn .5s .15s both}
+.cat-bubble:nth-child(3){animation:bubbleIn .5s .2s both}
+.cat-bubble:nth-child(4){animation:bubbleIn .5s .25s both}
+.cat-bubble:nth-child(5){animation:bubbleIn .5s .3s both}
+.cat-bubble:nth-child(6){animation:bubbleIn .5s .35s both}
+@keyframes bubbleIn{from{opacity:0;transform:translateY(15px) scale(.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* Hero text animation */
+.hero-banner h1{animation:heroSlide .8s .2s both}
+.hero-banner p{animation:heroSlide .8s .35s both}
+.hero-stats{animation:heroSlide .8s .5s both}
+@keyframes heroSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* Pulse on stat numbers */
+.hero-stat strong{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* Wiggle on badge hover */
+.badge:hover{animation:wiggle .4s}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+
+/* Shimmer on card image */
+.card-img-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);transform:translateX(-100%);transition:none}
+.card:hover .card-img-wrap::after{animation:shimmer .8s forwards}
+@keyframes shimmer{to{transform:translateX(100%)}}
 
 /* DIVIDER */
 .divider{height:2px;background:linear-gradient(90deg,transparent,var(--lav),transparent);max-width:1300px;margin:0 auto}
+
+/* Announce marquee */
+.announce{overflow:hidden;white-space:nowrap}
+.announce{animation:announceScroll 25s linear infinite}
+@keyframes announceScroll{0%{text-indent:100%}100%{text-indent:-200%}}
 
 /* FOOTER */
 footer{background:var(--lavl);padding:50px 40px 24px}
@@ -101,7 +139,7 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:10px}
 
 /* SCROLL TOP */
-.scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--lavd);color:var(--white);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(169,139,202,.3)}
+.scroll-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;background:var(--lavd);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(169,139,202,.3)}
 .scroll-top.show{opacity:1;transform:translateY(0)}
 .scroll-top:hover{transform:translateY(-3px);background:var(--lav)}
 
@@ -110,12 +148,12 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .empty h3{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px}
 
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}}
-@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:12px}.section{padding:30px 16px}.cat-row{gap:16px;padding:0 16px}.cat-circle{width:70px;height:70px;font-size:1.5rem}.hero-banner{padding:40px 16px}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.section{padding:30px 16px}.cat-row{gap:14px;padding:0 16px;justify-content:flex-start;flex-wrap:nowrap;width:max-content}.cat-circle{width:65px;height:65px;font-size:1.4rem}.hero-banner{padding:35px 16px;border-radius:0 0 20px 20px}.card{border-radius:16px}.card-body{padding:12px 14px}.card-title{font-size:.8rem;min-height:2.2em}.card-link{padding:7px 16px;font-size:.7rem}.section-header{flex-direction:column;gap:10px;align-items:flex-start}}
 </style>
 </head>
 <body>
 
-<div class="announce">✨ Premium Quality Products · <b>Pan India Delivery</b> · Available on Meesho & Amazon ✨</div>
+<div class="announce">✨ Premium Quality Products &nbsp;·&nbsp; <b>Pan India Delivery</b> &nbsp;·&nbsp; Available on Meesho & Amazon &nbsp;·&nbsp; Best Prices Guaranteed ✨ &nbsp;&nbsp;&nbsp; ✨ Premium Quality Products &nbsp;·&nbsp; <b>Pan India Delivery</b> &nbsp;·&nbsp; Available on Meesho & Amazon &nbsp;·&nbsp; Best Prices Guaranteed ✨</div>
 
 <nav id="nav">
   <div class="nav-inner">
@@ -172,20 +210,23 @@ footer{background:var(--lavl);padding:50px 40px 24px}
     <span class="view-all" onclick="filterCat('{{.}}',null)">View all →</span>
   </div>
   <div class="grid">
-    {{range index $.ByCategory .}}
-    <div class="card reveal" data-category="{{.Category}}">
+    {{range $i, $p := index $.ByCategory .}}
+    <div class="card reveal" data-category="{{$p.Category}}" style="--i:{{$i}}">
       <div class="card-img-wrap">
-        {{if .ImageUrl}}
-        <img class="card-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
+        {{if $p.ImageUrl}}
+        <img class="card-img" src="/img?url={{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
         {{else}}
         <div class="card-ph">🛍️</div>
         {{end}}
-        <div class="card-badge {{.Platform | lower}}">{{.Platform}}</div>
+        <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
+        <div class="card-wishlist">♡</div>
       </div>
       <div class="card-body">
-        <div class="card-title">{{.Title}}</div>
-        {{if .Price}}<div class="card-price">{{.Price}}{{if .OriginalPrice}}<span class="old">{{.OriginalPrice}}</span>{{end}}</div>{{end}}
-        <a href="{{.Url}}" target="_blank" class="card-link">Buy Now →</a>
+        <div class="card-title">{{$p.Title}}</div>
+        <div>
+          {{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}
+          <a href="{{$p.Url}}" target="_blank" class="card-link">Buy Now →</a>
+        </div>
       </div>
     </div>
     {{end}}
@@ -229,11 +270,31 @@ const ham=document.getElementById('ham'),mob=document.getElementById('mob');
 ham.addEventListener('click',()=>{ham.classList.toggle('active');mob.classList.toggle('open')});
 function closeMob(){ham.classList.remove('active');mob.classList.remove('open')}
 
-// Scroll reveal
+// Scroll reveal with stagger
 const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');obs.unobserve(e.target)}})
-},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+  const visible=entries.filter(e=>e.isIntersecting);
+  visible.forEach((e,i)=>{
+    setTimeout(()=>{e.target.classList.add('show')},i*60);
+    obs.unobserve(e.target);
+  });
+},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Tilt effect on cards
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-.5;
+    const y=(e.clientY-r.top)/r.height-.5;
+    card.style.transform=`translateY(-8px) scale(1.02) perspective(600px) rotateX(${-y*5}deg) rotateY(${x*5}deg)`;
+  });
+  card.addEventListener('mouseleave',()=>card.style.transform='');
+});
+
+// Wishlist toggle
+document.querySelectorAll('.card-wishlist').forEach(btn=>{
+  btn.addEventListener('click',e=>{e.stopPropagation();btn.textContent=btn.textContent==='\u2661'?'\u2665':'\u2661';btn.style.color=btn.textContent==='\u2665'?'#e8729a':'';});
+});
 
 // Category filter
 function filterCat(cat,el){
