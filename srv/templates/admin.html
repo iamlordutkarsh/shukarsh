@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin ✿ Shukarsh</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--p:#e8729a;--pl:#f9a8c9;--pd:#c94d7a;--pp:#fde8f0;--lav:#d4a5e5;--bg:#fff5f8;--bg2:#fff0f4;--tx:#4a2035;--txl:#8a5670;--w:#fff;--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(255,245,248,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(232,114,154,.08)}
+.nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p)}
+.logo span{color:var(--lav)}
+.back-btn{padding:8px 20px;border:2px solid var(--pl);border-radius:50px;font-size:.8rem;font-weight:700;color:var(--p);transition:all .3s}
+.back-btn:hover{background:var(--p);color:var(--w)}
+
+.container{max-width:900px;margin:0 auto;padding:40px 24px}
+h1{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:8px}
+h1 i{font-family:'Satisfy',cursive;color:var(--p);font-style:normal}
+.subtitle{color:var(--txl);margin-bottom:32px}
+
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:24px}
+.tab{padding:10px 24px;border-radius:50px;font-weight:700;font-size:.85rem;cursor:pointer;border:2px solid var(--pl);color:var(--p);background:var(--w);transition:all .3s}
+.tab.active{background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-color:var(--p)}
+
+/* CARDS */
+.add-box{background:var(--w);border-radius:var(--r);padding:28px;box-shadow:0 4px 20px rgba(232,114,154,.08);margin-bottom:40px}
+.add-box h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+input[type=text],input[type=url],textarea{width:100%;padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s;color:var(--tx);background:var(--w)}
+input:focus,textarea:focus{border-color:var(--p)}
+input::placeholder,textarea::placeholder{color:var(--pl)}
+textarea{resize:vertical;min-height:60px}
+select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;background:var(--w);color:var(--tx);cursor:pointer}
+.btn{padding:13px 28px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .3s;white-space:nowrap}
+.btn:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(232,114,154,.3)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+.msg{padding:12px 18px;border-radius:10px;margin-top:14px;font-size:.9rem;font-weight:600;display:none}
+.msg.ok{display:block;background:#e8f5e9;color:#2e7d32}
+.msg.err{display:block;background:#fce4ec;color:#c62828}
+.msg.loading{display:block;background:var(--pp);color:var(--p)}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.field-label{font-size:.8rem;font-weight:700;color:var(--txl);margin-bottom:4px;display:block}
+.field-group{margin-bottom:14px}
+
+/* PREVIEW */
+.preview{margin-top:16px;padding:16px;border:2px dashed var(--pl);border-radius:12px;display:none}
+.preview.show{display:flex;gap:16px;align-items:center}
+.preview img{width:80px;height:80px;border-radius:10px;object-fit:cover;background:var(--pp)}
+.preview-info h4{font-size:.95rem;margin-bottom:4px}
+.preview-info p{font-size:.8rem;color:var(--txl)}
+
+/* PRODUCTS LIST */
+.prod-list h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
+.prod-item{display:flex;align-items:center;gap:16px;background:var(--w);border-radius:14px;padding:14px 18px;margin-bottom:10px;box-shadow:0 2px 10px rgba(232,114,154,.05);transition:all .3s}
+.prod-item:hover{box-shadow:0 6px 20px rgba(232,114,154,.1)}
+.prod-img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--pp);flex-shrink:0}
+.prod-img-ph{width:56px;height:56px;border-radius:10px;background:var(--pp);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.prod-info{flex:1;min-width:0}
+.prod-title{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-meta{font-size:.75rem;color:var(--txl)}
+.prod-meta b{color:var(--p)}
+.del-btn{padding:8px 14px;border:2px solid #f8bbd0;border-radius:10px;background:none;font-size:.75rem;font-weight:700;color:var(--pd);cursor:pointer;transition:all .3s;flex-shrink:0}
+.del-btn:hover{background:var(--pd);color:var(--w);border-color:var(--pd)}
+.empty-msg{text-align:center;padding:40px;color:var(--txl);font-style:italic}
+.hint{font-size:.8rem;color:var(--txl);margin-top:8px;line-height:1.6}
+@media(max-width:600px){.form-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-inner">
+  <a href="/admin" class="logo">Shukarsh<span>✿</span> Admin</a>
+  <a href="/" class="back-btn">← View Site</a>
+</div></nav>
+
+<div class="container">
+  <h1>Add <i>Products</i> ✿</h1>
+  <p class="subtitle">Add products from Meesho, Amazon, Flipkart or manually</p>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('url')">🔗 From URL</div>
+    <div class="tab" onclick="switchTab('manual')">✏️ Manual Entry</div>
+  </div>
+
+  <div class="add-box">
+    <!-- URL MODE -->
+    <div class="panel active" id="panel-url">
+      <h2>🔗 Paste Product URL</h2>
+      <p class="hint">⚠️ Some sites (Meesho, Amazon) block auto-fetch. If it doesn't work, use Manual Entry and just paste the image URL + details.</p>
+      <form id="urlForm" class="form-row" style="margin-top:14px">
+        <input type="url" id="urlInput" placeholder="https://www.meesho.com/product/..." required>
+        <button type="submit" class="btn" id="urlBtn">✿ Fetch</button>
+      </form>
+      <div class="msg" id="urlMsg"></div>
+    </div>
+
+    <!-- MANUAL MODE -->
+    <div class="panel" id="panel-manual">
+      <h2>✏️ Add Product Manually</h2>
+      <form id="manualForm">
+        <div class="form-row">
+          <div class="field-group" style="flex:2"><label class="field-label">Product Title *</label>
+            <input type="text" name="title" placeholder="e.g. Silicon Spatula Set" required></div>
+          <div class="field-group" style="flex:1"><label class="field-label">Platform</label>
+            <select name="platform"><option value="Meesho">Meesho</option><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="Other">Other</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="field-group" style="flex:1"><label class="field-label">Price</label>
+            <input type="text" name="price" placeholder="₹299"></div>
+          <div class="field-group" style="flex:1"><label class="field-label">Original Price</label>
+            <input type="text" name="original_price" placeholder="₹599"></div>
+          <div class="field-group" style="flex:1"><label class="field-label">Rating</label>
+            <input type="text" name="rating" placeholder="4.2"></div>
+        </div>
+        <div class="field-group"><label class="field-label">Product URL</label>
+          <input type="url" name="url" placeholder="https://www.meesho.com/..."></div>
+        <div class="field-group"><label class="field-label">Image URL</label>
+          <input type="url" name="image_url" id="imgUrlInput" placeholder="https://... (right-click product image → Copy Image Address)" oninput="previewImage(this.value)"></div>
+        <div class="preview" id="imgPreview"><img id="previewImg" src=""><div class="preview-info"><h4>Image Preview</h4><p>Looking good! 💕</p></div></div>
+        <div class="field-group"><label class="field-label">Description</label>
+          <textarea name="description" placeholder="Short description of the product..."></textarea></div>
+        <button type="submit" class="btn">✿ Add Product</button>
+      </form>
+      <div class="msg" id="manualMsg"></div>
+    </div>
+  </div>
+
+  <div class="prod-list">
+    <h2>📦 Your Products ({{len .Products}})</h2>
+    {{if .Products}}
+      {{range .Products}}
+      <div class="prod-item" id="prod-{{.ID}}">
+        {{if .ImageUrl}}<img class="prod-img" src="{{.ImageUrl}}" onerror="this.outerHTML='<div class=prod-img-ph>📦</div>'">{{else}}<div class="prod-img-ph">📦</div>{{end}}
+        <div class="prod-info">
+          <div class="prod-title">{{.Title}}</div>
+          <div class="prod-meta"><b>{{.Platform}}</b> · {{if .Price}}{{.Price}}{{else}}Price N/A{{end}}</div>
+        </div>
+        <button class="del-btn" onclick="delProduct({{.ID}})">🗑 Delete</button>
+      </div>
+      {{end}}
+    {{else}}
+      <div class="empty-msg" id="emptyMsg">No products yet. Add your first one! 🌸</div>
+    {{end}}
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function previewImage(url) {
+  const p = document.getElementById('imgPreview');
+  const img = document.getElementById('previewImg');
+  if (url.trim()) { img.src = url; p.classList.add('show'); }
+  else { p.classList.remove('show'); }
+}
+
+// URL FORM
+document.getElementById('urlForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('urlBtn');
+  const msg = document.getElementById('urlMsg');
+  const url = document.getElementById('urlInput').value.trim();
+  btn.disabled = true; btn.textContent = '⏳ Fetching...';
+  msg.className = 'msg loading'; msg.textContent = '🔍 Scraping product data...';
+  try {
+    const fd = new FormData(); fd.append('url', url); fd.append('mode', 'url');
+    const res = await fetch('/api/add', {method:'POST', body:fd});
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    msg.className = 'msg ok';
+    msg.textContent = '✅ Added: ' + (data.product?.title || 'Product');
+    setTimeout(() => location.reload(), 1000);
+  } catch(err) { msg.className = 'msg err'; msg.textContent = '❌ ' + err.message; }
+  btn.disabled = false; btn.textContent = '✿ Fetch';
+});
+
+// MANUAL FORM
+document.getElementById('manualForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = document.getElementById('manualMsg');
+  const fd = new FormData(e.target); fd.append('mode', 'manual');
+  msg.className = 'msg loading'; msg.textContent = 'Adding...';
+  try {
+    const res = await fetch('/api/add', {method:'POST', body:fd});
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    msg.className = 'msg ok'; msg.textContent = '✅ Added: ' + (data.product?.title || 'Product');
+    setTimeout(() => location.reload(), 1000);
+  } catch(err) { msg.className = 'msg err'; msg.textContent = '❌ ' + err.message; }
+});
+
+async function delProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  await fetch('/api/delete/' + id, {method:'POST'});
+  document.getElementById('prod-' + id)?.remove();
+}
+</script>
+</body>
+</html>

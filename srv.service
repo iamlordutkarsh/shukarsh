@@ -1,0 +1,14 @@
+[Unit]
+Description=Shukarsh Enterprises Product Showcase
+After=network.target
+
+[Service]
+Type=simple
+User=exedev
+WorkingDirectory=/home/exedev/shukarsh
+ExecStart=/home/exedev/shukarsh/shukarsh-server --listen :8000
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
