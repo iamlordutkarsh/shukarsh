@@ -106,6 +106,22 @@ textarea{resize:vertical;min-height:60px}
 .modal h2{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:16px}
 .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--pp);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem}
 
+/* UPLOAD */
+.upload-area{position:relative}
+.upload-zone{border:2px dashed var(--pl);border-radius:14px;padding:20px;text-align:center;transition:all .3s;background:var(--pp)}
+.upload-zone.dragover{border-color:var(--p);background:rgba(201,179,232,.18);transform:scale(1.01)}
+.upload-icon{font-size:2rem;margin-bottom:6px}
+.upload-text{font-size:.82rem;color:var(--txl);margin-bottom:10px}
+.upload-btn-label{display:inline-flex;align-items:center;gap:4px;cursor:pointer;margin-bottom:0}
+.upload-or{font-size:.72rem;color:var(--pl);margin:10px 0 6px}
+.upload-zone input[type=url]{background:var(--w);border:2px solid rgba(167,139,202,.12);border-radius:10px;padding:10px 14px;width:100%;font-size:.85rem}
+.upload-preview{position:relative;display:inline-block;margin-top:10px}
+.upload-preview img{width:120px;height:120px;object-fit:cover;border-radius:14px;border:3px solid var(--p);box-shadow:0 4px 16px rgba(167,139,202,.2)}
+.img-remove-btn{position:absolute;top:-8px;right:-8px;background:var(--red);color:var(--w);border:none;border-radius:50px;padding:4px 10px;font-size:.7rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 2px 8px rgba(229,57,53,.3)}
+.upload-file-label{display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.upload-progress{margin-top:8px;font-size:.78rem;color:var(--p);font-weight:700;display:none}
+.upload-progress.show{display:block}
+
 @media(max-width:600px){.form-row{flex-direction:column}.edit-grid{grid-template-columns:1fr}.prod-actions{flex-direction:column}.img-slot{width:72px;height:72px}}
 </style>
 </head>
@@ -159,8 +175,23 @@ textarea{resize:vertical;min-height:60px}
         </div>
         <div class="field-group"><label class="field-label">Product URL</label>
           <input type="url" name="url" placeholder="https://www.meesho.com/..."></div>
-        <div class="field-group"><label class="field-label">Main Image URL</label>
-          <input type="url" name="image_url" placeholder="Right-click product image → Copy Image Address"></div>
+        <div class="field-group"><label class="field-label">Main Image</label>
+          <div class="upload-area" id="manual-upload-area">
+            <div class="upload-zone" id="manual-drop-zone">
+              <div class="upload-icon">📸</div>
+              <div class="upload-text">Drag & drop image here or</div>
+              <label class="btn btn-sm btn-outline upload-btn-label">
+                📁 Choose File
+                <input type="file" accept="image/*" id="manual-file-input" style="display:none" onchange="handleManualFileSelect(this)">
+              </label>
+              <div class="upload-or">— or paste URL —</div>
+              <input type="url" name="image_url" id="manual-image-url" placeholder="https://... image URL">
+            </div>
+            <div class="upload-preview" id="manual-upload-preview" style="display:none">
+              <img id="manual-preview-img">
+              <button type="button" class="img-remove-btn" onclick="clearManualUpload()">✕ Remove</button>
+            </div>
+          </div></div>
         <div class="field-group"><label class="field-label">Description</label>
           <textarea name="description" placeholder="Short description..."></textarea></div>
         <button type="submit" class="btn">✿ Add Product</button>
@@ -193,8 +224,12 @@ textarea{resize:vertical;min-height:60px}
             <div class="img-gallery-title">🖼️ Product Images <span style="font-weight:400;color:var(--txl)">(click to set as default)</span></div>
             <div class="img-grid" id="imgs-{{.ID}}"></div>
             <div class="add-img-row">
-              <input type="url" id="newimg-{{.ID}}" placeholder="Paste image URL here...">
-              <button class="btn btn-sm" onclick="addImage({{.ID}})">+ Add Image</button>
+              <input type="url" id="newimg-{{.ID}}" placeholder="Paste image URL...">
+              <button class="btn btn-sm" onclick="addImage({{.ID}})">+ URL</button>
+              <label class="btn btn-sm btn-outline upload-file-label">
+                📷 Upload
+                <input type="file" accept="image/*" style="display:none" onchange="handleEditFileUpload(this, {{.ID}})">
+              </label>
             </div>
           </div>
 
@@ -299,8 +334,9 @@ function renderImageGrid(id) {
     const isDefault = url.split('?')[0] === (data.defaultUrl || '').split('?')[0];
     const slot = document.createElement('div');
     slot.className = 'img-slot' + (isDefault ? ' default' : '');
+    const imgSrc = url.startsWith('/uploads/') ? url : '/img?url=' + encodeURIComponent(url);
     slot.innerHTML = `
-      <img src="/img?url=${encodeURIComponent(url)}" onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"><rect fill=\"%23f0eaf8\"/></svg>'">
+      <img src="${imgSrc}" onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"><rect fill=\"%23f0eaf8\"/></svg>'">
       ${isDefault ? '<div class="img-badge">DEFAULT</div>' : ''}
       <div class="img-remove" onclick="event.stopPropagation();removeImage(${id},${i})">✕</div>
       ${!isDefault ? '<div class="img-set-default" onclick="event.stopPropagation();setDefault('+id+','+i+')">Set Default</div>' : ''}
@@ -425,6 +461,93 @@ document.getElementById('manualForm').addEventListener('submit', async (e) => {
     setTimeout(() => location.reload(), 1000);
   } catch(err) { msg.className = 'msg err'; msg.textContent = '❌ ' + err.message; }
 });
+
+// === FILE UPLOAD FUNCTIONS ===
+
+// Upload a file to server, returns the URL
+async function uploadFile(file) {
+  const fd = new FormData();
+  fd.append('file', file);
+  const res = await fetch('/api/upload', { method: 'POST', body: fd });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data.url;
+}
+
+// Manual entry: file select
+async function handleManualFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const zone = document.getElementById('manual-drop-zone');
+  const preview = document.getElementById('manual-upload-preview');
+  const previewImg = document.getElementById('manual-preview-img');
+  const urlInput = document.getElementById('manual-image-url');
+  
+  zone.innerHTML = '<div class="upload-progress show">⏳ Uploading...</div>';
+  try {
+    const url = await uploadFile(file);
+    urlInput.value = url;
+    previewImg.src = url;
+    preview.style.display = 'inline-block';
+    zone.innerHTML = `<div class="upload-icon">✅</div><div class="upload-text">Image uploaded!</div>
+      <label class="btn btn-sm btn-outline upload-btn-label">📁 Change File<input type="file" accept="image/*" id="manual-file-input" style="display:none" onchange="handleManualFileSelect(this)"></label>
+      <div class="upload-or">— or paste URL —</div>
+      <input type="url" name="image_url" id="manual-image-url" placeholder="https://... image URL" value="${url}">`;
+  } catch(err) {
+    zone.innerHTML = `<div class="upload-icon">❌</div><div class="upload-text">${err.message}</div>
+      <label class="btn btn-sm btn-outline upload-btn-label">📁 Try Again<input type="file" accept="image/*" id="manual-file-input" style="display:none" onchange="handleManualFileSelect(this)"></label>
+      <div class="upload-or">— or paste URL —</div>
+      <input type="url" name="image_url" id="manual-image-url" placeholder="https://... image URL">`;
+  }
+}
+
+function clearManualUpload() {
+  const preview = document.getElementById('manual-upload-preview');
+  const urlInput = document.getElementById('manual-image-url');
+  preview.style.display = 'none';
+  if (urlInput) urlInput.value = '';
+}
+
+// Drag & drop for manual entry
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('manual-drop-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', async e => {
+    e.preventDefault(); zone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      // Create a fake input to reuse the handler
+      const dt = new DataTransfer(); dt.items.add(file);
+      const fakeInput = document.createElement('input'); fakeInput.type = 'file'; fakeInput.files = dt.files;
+      await handleManualFileSelect(fakeInput);
+    }
+  });
+});
+
+// Edit panel: upload file for existing product
+async function handleEditFileUpload(input, id) {
+  const file = input.files[0];
+  if (!file) return;
+  // Show loading in the add-img row
+  const row = input.closest('.add-img-row');
+  const origHTML = row.innerHTML;
+  row.innerHTML = '<span class="upload-progress show">⏳ Uploading image...</span>';
+  try {
+    const url = await uploadFile(file);
+    if (!productData[id]) productData[id] = { images: [], defaultUrl: '' };
+    productData[id].images.push(url);
+    if (!productData[id].defaultUrl) productData[id].defaultUrl = url;
+    renderImageGrid(id);
+    row.innerHTML = origHTML;
+    // Reset the file input
+    row.querySelector('input[type=file]').value = '';
+  } catch(err) {
+    row.innerHTML = origHTML;
+    alert('Upload failed: ' + err.message);
+  }
+}
 
 // Initialize
 initProductImages();

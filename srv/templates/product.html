@@ -190,7 +190,7 @@ footer p{font-size:.82rem;color:var(--textl)}
     <div class="gallery-main" id="mainImg">
       <div class="badge {{.Product.Platform | lower}}">{{.Product.Platform}}</div>
       {{if .Images}}
-      <img src="/img?url={{index .Images 0}}" alt="{{.Product.Title}}" id="mainImage" loading="eager">
+      <img src="{{imgSrc (index .Images 0)}}" alt="{{.Product.Title}}" id="mainImage" loading="eager">
       {{if gt (len .Images) 1}}
       <button class="gallery-nav prev" onclick="prevImg()">‹</button>
       <button class="gallery-nav next" onclick="nextImg()">›</button>
@@ -203,7 +203,7 @@ footer p{font-size:.82rem;color:var(--textl)}
     <div class="gallery-thumbs">
       {{range $i, $img := .Images}}
       <div class="thumb {{if eq $i 0}}active{{end}}" onclick="selectImg({{$i}})">
-        <img src="/img?url={{$img}}" alt="Image {{add $i 1}}" loading="lazy">
+        <img src="{{imgSrc $img}}" alt="Image {{add $i 1}}" loading="lazy">
       </div>
       {{end}}
     </div>
@@ -285,7 +285,7 @@ footer p{font-size:.82rem;color:var(--textl)}
     {{range .Related}}
     <a href="/product/{{.ID}}" class="rcard">
       {{if .ImageUrl}}
-      <img class="rcard-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy">
+      <img class="rcard-img" src="{{imgSrc .ImageUrl}}" alt="{{.Title}}" loading="lazy">
       {{else}}
       <div style="width:100%;aspect-ratio:1;background:var(--lavp);display:flex;align-items:center;justify-content:center;font-size:2.5rem">🛍️</div>
       {{end}}
@@ -318,7 +318,7 @@ let currentImg = 0;
 function selectImg(i) {
   currentImg = i;
   const mainImage = document.getElementById('mainImage');
-  if (mainImage) mainImage.src = '/img?url=' + images[i];
+  if (mainImage) mainImage.src = images[i].startsWith('/uploads/') ? images[i] : '/img?url=' + images[i];
   document.querySelectorAll('.thumb').forEach((t,j) => t.classList.toggle('active', j===i));
 }
 function nextImg() { if(images.length>1) selectImg((currentImg+1) % images.length); }

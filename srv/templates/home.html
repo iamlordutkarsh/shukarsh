@@ -228,7 +228,7 @@ footer{background:var(--lavl);padding:50px 40px 24px}
     <a href="/product/{{$p.ID}}" class="card reveal" data-category="{{$p.Category}}" style="--i:{{$i}}">
       <div class="card-img-wrap">
         {{if $p.ImageUrl}}
-        <img class="card-img" src="/img?url={{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
+        <img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
         {{else}}
         <div class="card-ph">🛍️</div>
         {{end}}

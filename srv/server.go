@@ -1,11 +1,15 @@
 package srv
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -21,15 +25,19 @@ type Server struct {
 	Hostname     string
 	TemplatesDir string
 	StaticDir    string
+	UploadsDir   string
 }
 
 func New(dbPath, hostname string) (*Server, error) {
 	_, thisFile, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(thisFile)
+	uploadsDir := filepath.Join(filepath.Dir(baseDir), "uploads")
+	os.MkdirAll(uploadsDir, 0755)
 	srv := &Server{
 		Hostname:     hostname,
 		TemplatesDir: filepath.Join(baseDir, "templates"),
 		StaticDir:    filepath.Join(baseDir, "static"),
+		UploadsDir:   uploadsDir,
 	}
 	if err := srv.setUpDatabase(dbPath); err != nil {
 		return nil, err
@@ -61,6 +69,8 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("GET /api/products", s.handleListProducts)
 	mux.HandleFunc("GET /api/product/{id}", s.handleGetProduct)
 	mux.HandleFunc("GET /img", handleImageProxy)
+	mux.HandleFunc("POST /api/upload", s.handleUploadImage)
+	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir(s.UploadsDir))))
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(s.StaticDir))))
 	slog.Info("starting server", "addr", addr)
 	return http.ListenAndServe(addr, mux)
@@ -119,6 +129,12 @@ var funcMap = template.FuncMap{
 	"json": func(v any) string {
 		b, _ := json.Marshal(v)
 		return string(b)
+	},
+	"imgSrc": func(url string) string {
+		if strings.HasPrefix(url, "/uploads/") || strings.HasPrefix(url, "/static/") {
+			return url
+		}
+		return "/img?url=" + url
 	},
 	"add": func(a, b int) int { return a + b },
 	"truncate": func(s string, n int) string {
@@ -436,6 +452,47 @@ func (s *Server) handleListProducts(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(products)
+}
+
+func (s *Server) handleUploadImage(w http.ResponseWriter, r *http.Request) {
+	// 10 MB max
+	r.ParseMultipartForm(10 << 20)
+
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		jsonError(w, "No file uploaded", 400)
+		return
+	}
+	defer file.Close()
+
+	// Validate extension
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".gif": true, ".webp": true}
+	if !allowed[ext] {
+		jsonError(w, "Only jpg, png, gif, webp allowed", 400)
+		return
+	}
+
+	// Generate unique filename
+	b := make([]byte, 12)
+	rand.Read(b)
+	filename := hex.EncodeToString(b) + ext
+
+	dst, err := os.Create(filepath.Join(s.UploadsDir, filename))
+	if err != nil {
+		jsonError(w, "Failed to save file", 500)
+		return
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, file); err != nil {
+		jsonError(w, "Failed to write file", 500)
+		return
+	}
+
+	url := "/uploads/" + filename
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]any{"ok": true, "url": url})
 }
 
 func jsonError(w http.ResponseWriter, msg string, code int) {
