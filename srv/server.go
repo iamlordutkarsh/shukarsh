@@ -52,6 +52,8 @@ func (s *Server) setUpDatabase(dbPath string) error {
 func (s *Server) Serve(addr string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", s.handleHome)
+	mux.HandleFunc("GET /product/{id}", s.handleProductDetail)
+	mux.HandleFunc("GET /search", s.handleSearch)
 	mux.HandleFunc("GET /admin", s.handleAdmin)
 	mux.HandleFunc("POST /api/add", s.handleAddProduct)
 	mux.HandleFunc("POST /api/delete/{id}", s.handleDeleteProduct)
@@ -83,27 +85,45 @@ var funcMap = template.FuncMap{
 		}
 	},
 	"catGif": func(cat string) string {
-		// Google Noto Animated Emoji GIFs
 		base := "https://fonts.gstatic.com/s/e/notoemoji/latest/"
 		switch cat {
 		case "Nails & Beauty":
-			return base + "1f485/512.gif" // nail polish
+			return base + "1f485/512.gif"
 		case "Caps & Accessories":
-			return base + "1f48e/512.gif" // gem
+			return base + "1f48e/512.gif"
 		case "Fashion & Clothing":
-			return base + "1f49c/512.gif" // purple heart
+			return base + "1f49c/512.gif"
 		case "Home & Decor":
-			return base + "1f4a1/512.gif" // lightbulb
+			return base + "1f4a1/512.gif"
 		case "Kitchen & Dining":
-			return base + "2615/512.gif" // coffee
+			return base + "2615/512.gif"
 		case "Electronics":
-			return base + "1f4ab/512.gif" // dizzy star
+			return base + "1f4ab/512.gif"
 		default:
-			return base + "1f381/512.gif" // gift
+			return base + "1f381/512.gif"
 		}
 	},
 	"catCount": func(m map[string][]dbgen.Product, cat string) int {
 		return len(m[cat])
+	},
+	"splitImages": func(s string) []string {
+		if s == "" {
+			return nil
+		}
+		var imgs []string
+		json.Unmarshal([]byte(s), &imgs)
+		return imgs
+	},
+	"json": func(v any) string {
+		b, _ := json.Marshal(v)
+		return string(b)
+	},
+	"add": func(a, b int) int { return a + b },
+	"truncate": func(s string, n int) string {
+		if len(s) <= n {
+			return s
+		}
+		return s[:n] + "..."
 	},
 }
 
@@ -114,7 +134,6 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	// Build category list and grouped products
 	catMap := map[string][]dbgen.Product{}
 	catOrder := []string{}
 	for _, p := range products {
@@ -140,6 +159,83 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func (s *Server) handleProductDetail(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid product ID", 400)
+		return
+	}
+	q := dbgen.New(s.DB)
+	product, err := q.GetProduct(r.Context(), id)
+	if err != nil {
+		http.Error(w, "Product not found", 404)
+		return
+	}
+
+	// Get related products from same category
+	var related []dbgen.Product
+	if product.Category != "" {
+		related, _ = q.ListProductsByCategory(r.Context(), product.Category)
+	}
+	// Filter out current product and limit to 4
+	var filteredRelated []dbgen.Product
+	for _, rp := range related {
+		if rp.ID != product.ID {
+			filteredRelated = append(filteredRelated, rp)
+		}
+		if len(filteredRelated) >= 4 {
+			break
+		}
+	}
+
+	// Parse images JSON
+	var images []string
+	if product.Images != "" {
+		json.Unmarshal([]byte(product.Images), &images)
+	}
+	if len(images) == 0 && product.ImageUrl != "" {
+		images = []string{product.ImageUrl}
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tmpl, err := template.New("product.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "product.html"))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	tmpl.Execute(w, map[string]any{
+		"Product":  product,
+		"Images":   images,
+		"Related":  filteredRelated,
+	})
+}
+
+func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("q")
+	var products []dbgen.Product
+	if query != "" {
+		q := dbgen.New(s.DB)
+		like := "%" + query + "%"
+		products, _ = q.SearchProducts(r.Context(), dbgen.SearchProductsParams{
+			Title:       like,
+			Description: like,
+			Category:    like,
+		})
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tmpl, err := template.New("search.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "search.html"))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	tmpl.Execute(w, map[string]any{
+		"Query":    query,
+		"Products": products,
+		"Count":    len(products),
+	})
+}
+
 func (s *Server) handleAdmin(w http.ResponseWriter, r *http.Request) {
 	q := dbgen.New(s.DB)
 	products, _ := q.ListProducts(r.Context())
@@ -153,22 +249,22 @@ func (s *Server) handleAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
-	mode := r.FormValue("mode") // "url" or "manual"
-
+	mode := r.FormValue("mode")
 	var params dbgen.InsertProductParams
 
 	if mode == "manual" {
-		// Manual entry
 		params = dbgen.InsertProductParams{
-			Url:           r.FormValue("url"),
-			Platform:      r.FormValue("platform"),
-			Title:         r.FormValue("title"),
-			Price:         r.FormValue("price"),
-			OriginalPrice: r.FormValue("original_price"),
-			ImageUrl:      r.FormValue("image_url"),
-			Description:   r.FormValue("description"),
-			Rating:        r.FormValue("rating"),
-			Category:      r.FormValue("category"),
+			Url:             r.FormValue("url"),
+			Platform:        r.FormValue("platform"),
+			Title:           r.FormValue("title"),
+			Price:           r.FormValue("price"),
+			OriginalPrice:   r.FormValue("original_price"),
+			ImageUrl:        r.FormValue("image_url"),
+			Description:     r.FormValue("description"),
+			Rating:          r.FormValue("rating"),
+			Category:        r.FormValue("category"),
+			Images:          r.FormValue("images"),
+			LongDescription: r.FormValue("long_description"),
 		}
 		if params.Title == "" {
 			jsonError(w, "Title is required", 400)
@@ -181,7 +277,6 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	} else {
-		// URL scrape mode
 		url := r.FormValue("url")
 		if url == "" {
 			jsonError(w, "URL is required", 400)
@@ -211,7 +306,6 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 		jsonError(w, "Failed to save: "+err.Error(), 500)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]any{"ok": true, "product": p})
 }

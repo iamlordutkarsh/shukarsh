@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Shukarsh Enterprises ✿</title>
+<title>Shukarsh Enterprises ✿ | Quality Products at Best Prices</title>
+<meta name="description" content="Shukarsh Enterprises - Your go-to destination for quality products. Shop nails, beauty, fashion, home decor & more at best prices. Available on Meesho & Amazon.">
+<meta property="og:title" content="Shukarsh Enterprises ✿">
+<meta property="og:description" content="Your go-to destination for quality products at best prices. Available on Meesho & Amazon.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#a78bca">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✿</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px}
@@ -24,8 +32,8 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 .nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
 .nav-links{display:flex;gap:32px}
-.nav-links a{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text);transition:color .3s}
-.nav-links a:hover{color:var(--lavd)}
+.nav-links a{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text);transition:all .3s;padding:6px 0;border-bottom:2px solid transparent}
+.nav-links a:hover{color:var(--lavd);border-bottom-color:var(--lavd)}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
 .hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
 .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
@@ -34,6 +42,8 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 .mobile-menu{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s}
 .mobile-menu.open{opacity:1;visibility:visible}
 .mobile-menu a{display:block;font-size:1.5rem;font-weight:700;padding:12px;text-align:center;color:var(--text)}
+.search-toggle{width:40px;height:40px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .3s;flex-shrink:0}
+.search-toggle:hover{background:var(--lavd);color:var(--white);transform:scale(1.08)}
 @media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}nav{padding:14px 20px}}
 
 /* CATEGORY BUBBLES */
@@ -162,9 +172,10 @@ footer{background:var(--lavl);padding:50px 40px 24px}
   <div class="nav-inner">
     <a href="/" class="logo">Shukarsh ✿</a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li>
-      {{range .Categories}}<li><a href="#cat-{{. | lower}}" onclick="scrollToCat('{{.}}');">{{.}}</a></li>{{end}}
+      <li><a href="#" onclick="event.preventDefault();showAll()">Home</a></li>
+      {{range .Categories}}<li><a href="#" onclick="event.preventDefault();navToCat('{{.}}')">{{.}}</a></li>{{end}}
     </ul>
+    <a href="/search" class="search-toggle" title="Search">🔍</a>
     <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -172,7 +183,7 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 <div class="mobile-menu" id="mob">
   <div>
     <a href="/" onclick="closeMob()">Home</a>
-    {{range .Categories}}<a href="#" onclick="scrollToCat('{{.}}');closeMob();return false">{{.}}</a>{{end}}
+    {{range .Categories}}<a href="#" onclick="event.preventDefault();navToCat('{{.}}');closeMob()">{{.}}</a>{{end}}
   </div>
 </div>
 
@@ -214,7 +225,7 @@ footer{background:var(--lavl);padding:50px 40px 24px}
   </div>
   <div class="grid">
     {{range $i, $p := index $.ByCategory .}}
-    <div class="card reveal" data-category="{{$p.Category}}" style="--i:{{$i}}">
+    <a href="/product/{{$p.ID}}" class="card reveal" data-category="{{$p.Category}}" style="--i:{{$i}}">
       <div class="card-img-wrap">
         {{if $p.ImageUrl}}
         <img class="card-img" src="/img?url={{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
@@ -222,16 +233,16 @@ footer{background:var(--lavl);padding:50px 40px 24px}
         <div class="card-ph">🛍️</div>
         {{end}}
         <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
-        <div class="card-wishlist">♡</div>
+        <div class="card-wishlist" onclick="event.preventDefault();event.stopPropagation();toggleWish(this)">♡</div>
       </div>
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
         <div>
           {{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}
-          <a href="{{$p.Url}}" target="_blank" class="card-link">Buy Now →</a>
+          <span class="card-link">View Details →</span>
         </div>
       </div>
-    </div>
+    </a>
     {{end}}
   </div>
 </div>
@@ -295,9 +306,7 @@ document.querySelectorAll('.card').forEach(card=>{
 });
 
 // Wishlist toggle
-document.querySelectorAll('.card-wishlist').forEach(btn=>{
-  btn.addEventListener('click',e=>{e.stopPropagation();btn.textContent=btn.textContent==='\u2661'?'\u2665':'\u2661';btn.style.color=btn.textContent==='\u2665'?'#e8729a':'';});
-});
+function toggleWish(btn){btn.textContent=btn.textContent==='\u2661'?'\u2665':'\u2661';btn.style.color=btn.textContent==='\u2665'?'#e8729a':'';}
 
 // Category filter
 function filterCat(cat,el){
@@ -313,13 +322,38 @@ function filterCat(cat,el){
 }
 function filterAll(el){
   document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+  if(el)el.classList.add('active');
+  else document.querySelector('.cat-bubble')?.classList.add('active');
   document.querySelectorAll('.cat-sec').forEach(s=>s.style.display='');
   document.querySelectorAll('.divider').forEach(d=>d.style.display='');
 }
+function showAll(){
+  filterAll(null);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function scrollToCat(cat){
-  const el=document.querySelector('[data-cat="'+cat+'"]');
+  const el=document.querySelector('.cat-sec[data-cat="'+cat+'"]');
   if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function navToCat(cat){
+  // Show only that category
+  document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.cat-sec').forEach(s=>{
+    s.style.display=s.dataset.cat===cat?'':'none';
+  });
+  document.querySelectorAll('.divider').forEach(d=>d.style.display='none');
+  // Activate matching bubble
+  document.querySelectorAll('.cat-bubble').forEach(b=>{
+    const name=b.querySelector('.cat-name');
+    if(name && name.textContent.trim()===cat) b.classList.add('active');
+  });
+  // Scroll to top of products
+  setTimeout(()=>{
+    const sec=document.querySelector('.cat-sec[data-cat="'+cat+'"]');
+    if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+  },100);
+  // Re-observe cards
+  document.querySelectorAll('.card.reveal:not(.show)').forEach(c=>obs.observe(c));
 }
 </script>
 </body>

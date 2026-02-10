@@ -15,17 +15,19 @@ type Migration struct {
 }
 
 type Product struct {
-	ID            int64     `json:"id"`
-	Url           string    `json:"url"`
-	Platform      string    `json:"platform"`
-	Title         string    `json:"title"`
-	Price         string    `json:"price"`
-	OriginalPrice string    `json:"original_price"`
-	ImageUrl      string    `json:"image_url"`
-	Description   string    `json:"description"`
-	Rating        string    `json:"rating"`
-	AddedAt       time.Time `json:"added_at"`
-	Category      string    `json:"category"`
+	ID              int64     `json:"id"`
+	Url             string    `json:"url"`
+	Platform        string    `json:"platform"`
+	Title           string    `json:"title"`
+	Price           string    `json:"price"`
+	OriginalPrice   string    `json:"original_price"`
+	ImageUrl        string    `json:"image_url"`
+	Description     string    `json:"description"`
+	Rating          string    `json:"rating"`
+	AddedAt         time.Time `json:"added_at"`
+	Category        string    `json:"category"`
+	Images          string    `json:"images"`
+	LongDescription string    `json:"long_description"`
 }
 
 type Visitor struct {

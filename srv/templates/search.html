@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Search | Shukarsh ✿</title>
+<meta name="description" content="Search products on Shukarsh Enterprises - Nails, Beauty, Fashion, Home & more">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}img{display:block}
+::selection{background:var(--lavl)}
+
+nav{background:var(--bg);padding:18px 40px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
+.nav-btn{padding:10px 22px;border-radius:50px;font-size:.82rem;font-weight:700;border:2px solid var(--lavl);color:var(--lavd);transition:all .3s}
+.nav-btn:hover{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+
+.search-hero{max-width:700px;margin:0 auto;padding:60px 24px 40px;text-align:center}
+.search-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:8px}
+.search-hero h1 em{font-family:'Satisfy',cursive;color:var(--lavd);font-style:normal}
+.search-hero p{color:var(--textl);margin-bottom:28px}
+
+.search-box{position:relative;max-width:600px;margin:0 auto}
+.search-box input{width:100%;padding:18px 56px 18px 24px;border:3px solid var(--lavl);border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;outline:none;background:var(--white);color:var(--text);transition:border-color .3s;box-shadow:0 4px 20px rgba(169,139,202,.1)}
+.search-box input:focus{border-color:var(--lavd);box-shadow:0 6px 30px rgba(169,139,202,.2)}
+.search-box input::placeholder{color:var(--lav)}
+.search-box button{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--lavd),#9b6ec5);color:var(--white);border:none;font-size:1.1rem;cursor:pointer;transition:all .3s}
+.search-box button:hover{transform:translateY(-50%) scale(1.08)}
+
+.results{max-width:1300px;margin:0 auto;padding:0 40px 60px}
+.results-count{font-size:.9rem;color:var(--textl);margin-bottom:20px;font-weight:600}
+.results-count b{color:var(--lavd)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:var(--white);border-radius:20px;overflow:hidden;transition:all .45s cubic-bezier(.22,1,.36,1);cursor:pointer;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(169,139,202,.15)}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover}
+.card-ph{width:100%;aspect-ratio:1;background:var(--lavp);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.card-body{padding:16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.card-title{font-size:.88rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:2.4em}
+.card-price{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--lavd)}
+.card-badge{position:absolute;top:12px;left:12px;padding:5px 12px;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white)}
+.card-badge.meesho{background:rgba(167,139,202,.85)}
+.card-badge.amazon{background:rgba(255,153,0,.85)}
+.card-img-wrap{position:relative;overflow:hidden;border-radius:20px 20px 0 0}
+.empty-results{text-align:center;padding:60px 24px}
+.empty-results h3{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:8px}
+.empty-results p{color:var(--textl)}
+.suggestions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.suggestion{padding:8px 18px;background:var(--lavl);border-radius:20px;font-size:.82rem;font-weight:700;color:var(--lavd);cursor:pointer;transition:all .3s}
+.suggestion:hover{background:var(--lavd);color:var(--white)}
+
+footer{background:var(--lavl);padding:30px;text-align:center}
+.footer-logo{font-family:'Satisfy',cursive;font-size:1.4rem;color:var(--lavd);margin-bottom:4px}
+footer p{font-size:.78rem;color:var(--textl)}
+
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.results{padding:0 16px 40px}.search-hero{padding:40px 16px 24px}nav{padding:14px 20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Shukarsh ✿</a>
+    <a href="/" class="nav-btn">← Back to Shop</a>
+  </div>
+</nav>
+
+<div class="search-hero">
+  <h1>🔍 Search <em>Shukarsh</em></h1>
+  <p>Find your favorite products</p>
+  <form class="search-box" action="/search" method="GET">
+    <input type="text" name="q" value="{{.Query}}" placeholder="Search for nails, caps, fashion..." autofocus>
+    <button type="submit">🔍</button>
+  </form>
+</div>
+
+<div class="results">
+  {{if .Query}}
+    {{if .Products}}
+    <div class="results-count">Found <b>{{.Count}}</b> results for "<b>{{.Query}}</b>"</div>
+    <div class="grid">
+      {{range .Products}}
+      <a href="/product/{{.ID}}" class="card">
+        <div class="card-img-wrap">
+          {{if .ImageUrl}}
+          <img class="card-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
+          {{else}}
+          <div class="card-ph">🛍️</div>
+          {{end}}
+          <div class="card-badge {{.Platform | lower}}">{{.Platform}}</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">{{.Title}}</div>
+          {{if .Price}}<div class="card-price">{{.Price}}</div>{{end}}
+        </div>
+      </a>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="empty-results">
+      <h3>No results for "{{.Query}}" 😟</h3>
+      <p>Try a different search term</p>
+      <div class="suggestions">
+        <a href="/search?q=nails" class="suggestion">💅 Nails</a>
+        <a href="/search?q=cap" class="suggestion">🧢 Caps</a>
+        <a href="/search?q=fashion" class="suggestion">👗 Fashion</a>
+        <a href="/search?q=kitchen" class="suggestion">🍽️ Kitchen</a>
+      </div>
+    </div>
+    {{end}}
+  {{else}}
+  <div class="empty-results">
+    <h3>What are you looking for? ✨</h3>
+    <p>Type something to search our products</p>
+    <div class="suggestions">
+      <a href="/search?q=nails" class="suggestion">💅 Nails</a>
+      <a href="/search?q=artificial" class="suggestion">✨ Artificial</a>
+      <a href="/search?q=cap" class="suggestion">🧢 Caps</a>
+      <a href="/search?q=fashion" class="suggestion">👗 Fashion</a>
+      <a href="/search?q=bottle" class="suggestion">🪴 Bottles</a>
+      <a href="/search?q=kitchen" class="suggestion">🍽️ Kitchen</a>
+    </div>
+  </div>
+  {{end}}
+</div>
+
+<footer>
+  <div class="footer-logo">Shukarsh ✿</div>
+  <p>© 2025 Shukarsh Enterprises. Made with 💜</p>
+</footer>
+</body>
+</html>

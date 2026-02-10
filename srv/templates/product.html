@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{.Product.Title}} | Shukarsh ✿</title>
+
+<!-- SEO & Open Graph -->
+<meta name="description" content="{{if .Product.Description}}{{truncate .Product.Description 160}}{{else}}{{.Product.Title}} - Buy at best price from Shukarsh Enterprises{{end}}">
+<meta property="og:title" content="{{.Product.Title}} | Shukarsh ✿">
+<meta property="og:description" content="{{if .Product.Description}}{{truncate .Product.Description 200}}{{else}}Shop {{.Product.Title}} at the best price on {{.Product.Platform}}{{end}}">
+<meta property="og:type" content="product">
+<meta property="og:url" content="/product/{{.Product.ID}}">
+{{if .Product.ImageUrl}}<meta property="og:image" content="/img?url={{.Product.ImageUrl}}">{{end}}
+{{if .Product.Price}}<meta property="product:price:amount" content="{{.Product.Price}}">{{end}}
+<meta property="product:price:currency" content="INR">
+<meta name="twitter:card" content="summary_large_image">
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px;--pink:#e8729a;--pinkl:#fde8f0}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
+a{text-decoration:none;color:inherit}img{display:block}
+::selection{background:var(--lavl);color:var(--text)}
+
+/* NAV */
+nav{background:var(--bg);padding:18px 40px;position:sticky;top:0;z-index:100;transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-btn{padding:10px 22px;border-radius:50px;font-size:.82rem;font-weight:700;border:2px solid var(--lavl);color:var(--lavd);transition:all .3s;background:transparent}
+.nav-btn:hover{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+.search-icon{width:40px;height:40px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .3s}
+.search-icon:hover{background:var(--lavd);color:var(--white)}
+
+/* BREADCRUMB */
+.breadcrumb{max-width:1300px;margin:0 auto;padding:16px 40px;font-size:.82rem;color:var(--textl)}
+.breadcrumb a{color:var(--lavd);font-weight:600}
+.breadcrumb a:hover{text-decoration:underline}
+
+/* PRODUCT DETAIL LAYOUT */
+.product-page{max-width:1300px;margin:0 auto;padding:0 40px 60px;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+
+/* IMAGE GALLERY */
+.gallery{position:sticky;top:100px}
+.gallery-main{position:relative;border-radius:24px;overflow:hidden;background:var(--white);box-shadow:0 8px 40px rgba(169,139,202,.1);aspect-ratio:1;cursor:zoom-in}
+.gallery-main img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.22,1,.36,1)}
+.gallery-main:hover img{transform:scale(1.05)}
+.gallery-main .badge{position:absolute;top:16px;left:16px;padding:6px 16px;border-radius:20px;font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white);z-index:2}
+.badge.meesho{background:rgba(167,139,202,.9)}
+.badge.amazon{background:rgba(255,153,0,.9)}
+.badge.flipkart{background:rgba(40,116,240,.9)}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:all .3s;z-index:2;border:none;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.gallery-nav:hover{background:var(--lavd);color:var(--white);transform:translateY(-50%) scale(1.1)}
+.gallery-nav.prev{left:12px}
+.gallery-nav.next{right:12px}
+.gallery-thumbs{display:flex;gap:12px;margin-top:16px;justify-content:center}
+.thumb{width:72px;height:72px;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all .3s;background:var(--white);box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.thumb.active{border-color:var(--lavd);box-shadow:0 4px 15px rgba(169,139,202,.2)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb:hover{border-color:var(--lav);transform:translateY(-2px)}
+
+/* PRODUCT INFO */
+.product-info{padding-top:10px}
+.product-category{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:var(--lavl);border-radius:20px;font-size:.75rem;font-weight:700;color:var(--lavd);margin-bottom:14px}
+.product-title{font-family:'DM Serif Display',serif;font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.3;margin-bottom:16px}
+.product-rating{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.stars{display:flex;gap:2px;font-size:1.1rem}
+.star{color:#ddd}
+.star.filled{color:#f5c518}
+.rating-text{font-size:.85rem;color:var(--textl);font-weight:600}
+.price-box{background:var(--lavp);border-radius:20px;padding:22px 28px;margin-bottom:24px}
+.price-main{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--lavd)}
+.price-old{font-size:1rem;color:#bbb;text-decoration:line-through;margin-left:10px;font-family:'Nunito',sans-serif}
+.price-save{display:inline-block;margin-top:6px;padding:4px 12px;background:var(--lavd);color:var(--white);border-radius:12px;font-size:.72rem;font-weight:800;letter-spacing:.5px}
+.product-desc{font-size:.95rem;line-height:1.8;color:var(--textl);margin-bottom:28px}
+.product-desc h3{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--text);margin-bottom:8px}
+
+/* BUY BUTTONS */
+.buy-actions{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.buy-btn{flex:1;min-width:180px;padding:18px 32px;border-radius:50px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;border:none;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1);text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.5px;position:relative;overflow:hidden}
+.buy-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);opacity:0;transition:opacity .3s}
+.buy-btn:hover::before{opacity:1}
+.buy-btn.primary{background:linear-gradient(135deg,var(--lavd),#9b6ec5);color:var(--white);box-shadow:0 6px 25px rgba(167,139,202,.35)}
+.buy-btn.primary:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 35px rgba(167,139,202,.45)}
+.buy-btn.secondary{background:var(--white);color:var(--lavd);border:2.5px solid var(--lavd);box-shadow:0 4px 15px rgba(0,0,0,.04)}
+.buy-btn.secondary:hover{background:var(--lavl);transform:translateY(-3px)}
+
+/* FEATURES */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.feature{text-align:center;padding:18px 12px;background:var(--white);border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
+.feature-icon{font-size:1.5rem;margin-bottom:6px}
+.feature-text{font-size:.72rem;font-weight:700;color:var(--textl);text-transform:uppercase;letter-spacing:.5px}
+
+/* SHARE */
+.share-bar{display:flex;align-items:center;gap:10px;padding-top:20px;border-top:1px solid var(--lavl)}
+.share-bar span{font-size:.82rem;font-weight:700;color:var(--textl)}
+.share-btn{width:38px;height:38px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:.9rem;cursor:pointer;transition:all .3s}
+.share-btn:hover{background:var(--lavd);color:var(--white);transform:translateY(-2px)}
+
+/* RELATED */
+.related-section{max-width:1300px;margin:0 auto;padding:40px 40px 60px}
+.related-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:24px;text-align:center}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.rcard{background:var(--white);border-radius:20px;overflow:hidden;transition:all .45s cubic-bezier(.22,1,.36,1);cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.rcard:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(169,139,202,.15)}
+.rcard-img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .5s}
+.rcard:hover .rcard-img{transform:scale(1.05)}
+.rcard-body{padding:14px 16px;text-align:center}
+.rcard-title{font-size:.85rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:6px}
+.rcard-price{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--lavd)}
+
+/* DIVIDER GRADIENT */
+.section-divider{height:3px;background:linear-gradient(90deg,transparent,var(--lav),transparent);max-width:200px;margin:0 auto 40px}
+
+/* FOOTER */
+footer{background:var(--lavl);padding:40px 40px 20px}
+.footer-inner{max-width:1300px;margin:0 auto;text-align:center}
+.footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:8px}
+footer p{font-size:.82rem;color:var(--textl)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.fade-up{animation:fadeUp .6s both}
+.fade-up-d1{animation:fadeUp .6s .1s both}
+.fade-up-d2{animation:fadeUp .6s .2s both}
+.fade-up-d3{animation:fadeUp .6s .3s both}
+.fade-up-d4{animation:fadeUp .6s .4s both}
+.slide-in{animation:slideIn .5s both}
+.scale-in{animation:scaleIn .5s .2s both}
+.float-anim{animation:float 3s ease-in-out infinite}
+
+/* Heart beat on buy button */
+@keyframes heartBeat{0%{transform:scale(1)}14%{transform:scale(1.05)}28%{transform:scale(1)}42%{transform:scale(1.03)}70%{transform:scale(1)}}
+.buy-btn.primary{animation:heartBeat 2s ease-in-out infinite 2s}
+.buy-btn.primary:hover{animation:none}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .product-page{grid-template-columns:1fr;gap:30px;padding:0 20px 40px}
+  .gallery{position:static}
+  .related-grid{grid-template-columns:repeat(2,1fr)}
+  nav{padding:14px 20px}
+  .breadcrumb{padding:12px 20px}
+  .features{grid-template-columns:repeat(3,1fr);gap:10px}
+  .related-section{padding:30px 20px 40px}
+}
+@media(max-width:600px){
+  .product-page{padding:0 16px 30px}
+  .buy-actions{flex-direction:column}
+  .buy-btn{min-width:auto}
+  .thumb{width:56px;height:56px;border-radius:10px}
+  .breadcrumb{padding:10px 16px;font-size:.75rem}
+  .price-main{font-size:2rem}
+  .features{grid-template-columns:repeat(3,1fr);gap:8px}
+  .feature{padding:14px 8px}
+  .feature-icon{font-size:1.2rem}
+  .feature-text{font-size:.65rem}
+  .related-section{padding:24px 16px 30px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="/" class="logo">Shukarsh ✿</a>
+    <div class="nav-right">
+      <a href="/search" class="search-icon" title="Search">🔍</a>
+      <a href="/" class="nav-btn">← Back to Shop</a>
+    </div>
+  </div>
+</nav>
+
+<div class="breadcrumb fade-up">
+  <a href="/">Home</a> &nbsp;›&nbsp; 
+  {{if .Product.Category}}<a href="/" onclick="localStorage.setItem('filterCat','{{.Product.Category}}')">{{.Product.Category}}</a> &nbsp;›&nbsp;{{end}}
+  <span>{{truncate .Product.Title 50}}</span>
+</div>
+
+<div class="product-page">
+  <!-- IMAGE GALLERY -->
+  <div class="gallery scale-in">
+    <div class="gallery-main" id="mainImg">
+      <div class="badge {{.Product.Platform | lower}}">{{.Product.Platform}}</div>
+      {{if .Images}}
+      <img src="/img?url={{index .Images 0}}" alt="{{.Product.Title}}" id="mainImage" loading="eager">
+      {{if gt (len .Images) 1}}
+      <button class="gallery-nav prev" onclick="prevImg()">‹</button>
+      <button class="gallery-nav next" onclick="nextImg()">›</button>
+      {{end}}
+      {{else}}
+      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;background:var(--lavp)">🛍️</div>
+      {{end}}
+    </div>
+    {{if gt (len .Images) 1}}
+    <div class="gallery-thumbs">
+      {{range $i, $img := .Images}}
+      <div class="thumb {{if eq $i 0}}active{{end}}" onclick="selectImg({{$i}})">
+        <img src="/img?url={{$img}}" alt="Image {{add $i 1}}" loading="lazy">
+      </div>
+      {{end}}
+    </div>
+    {{end}}
+  </div>
+
+  <!-- PRODUCT INFO -->
+  <div class="product-info">
+    {{if .Product.Category}}
+    <div class="product-category fade-up">{{catEmoji .Product.Category}} {{.Product.Category}}</div>
+    {{end}}
+    
+    <h1 class="product-title fade-up-d1">{{.Product.Title}}</h1>
+    
+    {{if .Product.Rating}}
+    <div class="product-rating fade-up-d2">
+      <div class="stars" id="stars"></div>
+      <span class="rating-text">{{.Product.Rating}} out of 5</span>
+    </div>
+    {{end}}
+    
+    <div class="price-box fade-up-d2">
+      {{if .Product.Price}}
+      <span class="price-main">{{.Product.Price}}</span>
+      {{if .Product.OriginalPrice}}<span class="price-old">{{.Product.OriginalPrice}}</span>{{end}}
+      {{else}}
+      <span class="price-main" style="font-size:1.4rem">Price available on {{.Product.Platform}}</span>
+      {{end}}
+      {{if and .Product.Price .Product.OriginalPrice}}
+      <div><span class="price-save">✨ Great Deal!</span></div>
+      {{end}}
+    </div>
+    
+    {{if or .Product.Description .Product.LongDescription}}
+    <div class="product-desc fade-up-d3">
+      <h3>About this product 💜</h3>
+      <p>{{if .Product.LongDescription}}{{.Product.LongDescription}}{{else}}{{.Product.Description}}{{end}}</p>
+    </div>
+    {{end}}
+    
+    <div class="buy-actions fade-up-d3">
+      <a href="{{.Product.Url}}" target="_blank" class="buy-btn primary">
+        🛒 Buy Now on {{.Product.Platform}}
+      </a>
+      <button class="buy-btn secondary" onclick="copyLink()">
+        🔗 Share
+      </button>
+    </div>
+    
+    <div class="features fade-up-d4">
+      <div class="feature">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-text">Pan India<br>Delivery</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">✨</div>
+        <div class="feature-text">Premium<br>Quality</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💜</div>
+        <div class="feature-text">Best<br>Prices</div>
+      </div>
+    </div>
+    
+    <div class="share-bar fade-up-d4">
+      <span>Share:</span>
+      <a class="share-btn" href="https://wa.me/?text={{.Product.Title}}%20-%20{{.Product.Url}}" target="_blank" title="WhatsApp">💬</a>
+      <a class="share-btn" href="https://twitter.com/intent/tweet?text={{.Product.Title}}&url={{.Product.Url}}" target="_blank" title="Twitter">𝕏</a>
+      <span class="share-btn" onclick="copyLink()" title="Copy Link">📋</span>
+    </div>
+  </div>
+</div>
+
+{{if .Related}}
+<div class="related-section">
+  <h2 class="related-title">You Might Also Love 💜</h2>
+  <div class="section-divider"></div>
+  <div class="related-grid">
+    {{range .Related}}
+    <a href="/product/{{.ID}}" class="rcard">
+      {{if .ImageUrl}}
+      <img class="rcard-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy">
+      {{else}}
+      <div style="width:100%;aspect-ratio:1;background:var(--lavp);display:flex;align-items:center;justify-content:center;font-size:2.5rem">🛍️</div>
+      {{end}}
+      <div class="rcard-body">
+        <div class="rcard-title">{{.Title}}</div>
+        {{if .Price}}<div class="rcard-price">{{.Price}}</div>{{end}}
+      </div>
+    </a>
+    {{end}}
+  </div>
+</div>
+{{end}}
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">Shukarsh ✿</div>
+    <p>© 2025 Shukarsh Enterprises. Made with 💜</p>
+  </div>
+</footer>
+
+<script>
+// Nav scroll shadow
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>50));
+
+// Image gallery
+const images = {{json .Images}};
+let currentImg = 0;
+
+function selectImg(i) {
+  currentImg = i;
+  const mainImage = document.getElementById('mainImage');
+  if (mainImage) mainImage.src = '/img?url=' + images[i];
+  document.querySelectorAll('.thumb').forEach((t,j) => t.classList.toggle('active', j===i));
+}
+function nextImg() { if(images.length>1) selectImg((currentImg+1) % images.length); }
+function prevImg() { if(images.length>1) selectImg((currentImg-1+images.length) % images.length); }
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight') nextImg();
+  if(e.key==='ArrowLeft') prevImg();
+});
+
+// Touch swipe on gallery
+let touchStartX = 0;
+const gallery = document.querySelector('.gallery-main');
+if(gallery) {
+  gallery.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+  gallery.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if(Math.abs(diff) > 50) { diff > 0 ? nextImg() : prevImg(); }
+  });
+}
+
+// Stars rendering
+const starsEl = document.getElementById('stars');
+if(starsEl) {
+  const rating = parseFloat('{{.Product.Rating}}') || 0;
+  for(let i = 1; i <= 5; i++) {
+    const s = document.createElement('span');
+    s.className = 'star' + (i <= Math.round(rating) ? ' filled' : '');
+    s.textContent = '★';
+    starsEl.appendChild(s);
+  }
+}
+
+// Copy link
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const btn = event.target.closest('.buy-btn, .share-btn');
+    if(btn) { const orig = btn.innerHTML; btn.innerHTML = '✅ Copied!'; setTimeout(()=>btn.innerHTML=orig, 2000); }
+  });
+}
+</script>
+</body>
+</html>

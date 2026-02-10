@@ -19,7 +19,7 @@ func (q *Queries) DeleteProduct(ctx context.Context, id int64) error {
 }
 
 const getProduct = `-- name: GetProduct :one
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category FROM products WHERE id = ?
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE id = ?
 `
 
 func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
@@ -37,26 +37,30 @@ func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
 		&i.Rating,
 		&i.AddedAt,
 		&i.Category,
+		&i.Images,
+		&i.LongDescription,
 	)
 	return i, err
 }
 
 const insertProduct = `-- name: InsertProduct :one
-INSERT INTO products (url, platform, title, price, original_price, image_url, description, rating, category)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-RETURNING id, url, platform, title, price, original_price, image_url, description, rating, added_at, category
+INSERT INTO products (url, platform, title, price, original_price, image_url, description, rating, category, images, long_description)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+RETURNING id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description
 `
 
 type InsertProductParams struct {
-	Url           string `json:"url"`
-	Platform      string `json:"platform"`
-	Title         string `json:"title"`
-	Price         string `json:"price"`
-	OriginalPrice string `json:"original_price"`
-	ImageUrl      string `json:"image_url"`
-	Description   string `json:"description"`
-	Rating        string `json:"rating"`
-	Category      string `json:"category"`
+	Url             string `json:"url"`
+	Platform        string `json:"platform"`
+	Title           string `json:"title"`
+	Price           string `json:"price"`
+	OriginalPrice   string `json:"original_price"`
+	ImageUrl        string `json:"image_url"`
+	Description     string `json:"description"`
+	Rating          string `json:"rating"`
+	Category        string `json:"category"`
+	Images          string `json:"images"`
+	LongDescription string `json:"long_description"`
 }
 
 func (q *Queries) InsertProduct(ctx context.Context, arg InsertProductParams) (Product, error) {
@@ -70,6 +74,8 @@ func (q *Queries) InsertProduct(ctx context.Context, arg InsertProductParams) (P
 		arg.Description,
 		arg.Rating,
 		arg.Category,
+		arg.Images,
+		arg.LongDescription,
 	)
 	var i Product
 	err := row.Scan(
@@ -84,6 +90,8 @@ func (q *Queries) InsertProduct(ctx context.Context, arg InsertProductParams) (P
 		&i.Rating,
 		&i.AddedAt,
 		&i.Category,
+		&i.Images,
+		&i.LongDescription,
 	)
 	return i, err
 }
@@ -116,7 +124,7 @@ func (q *Queries) ListCategories(ctx context.Context) ([]string, error) {
 }
 
 const listProducts = `-- name: ListProducts :many
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category FROM products ORDER BY added_at DESC
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products ORDER BY added_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -140,6 +148,96 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 			&i.Rating,
 			&i.AddedAt,
 			&i.Category,
+			&i.Images,
+			&i.LongDescription,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listProductsByCategory = `-- name: ListProductsByCategory :many
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE category = ? ORDER BY added_at DESC
+`
+
+func (q *Queries) ListProductsByCategory(ctx context.Context, category string) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, listProductsByCategory, category)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Product{}
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.Platform,
+			&i.Title,
+			&i.Price,
+			&i.OriginalPrice,
+			&i.ImageUrl,
+			&i.Description,
+			&i.Rating,
+			&i.AddedAt,
+			&i.Category,
+			&i.Images,
+			&i.LongDescription,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const searchProducts = `-- name: SearchProducts :many
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE title LIKE ? OR description LIKE ? OR category LIKE ? ORDER BY added_at DESC
+`
+
+type SearchProductsParams struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Category    string `json:"category"`
+}
+
+func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, searchProducts, arg.Title, arg.Description, arg.Category)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Product{}
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.Platform,
+			&i.Title,
+			&i.Price,
+			&i.OriginalPrice,
+			&i.ImageUrl,
+			&i.Description,
+			&i.Rating,
+			&i.AddedAt,
+			&i.Category,
+			&i.Images,
+			&i.LongDescription,
 		); err != nil {
 			return nil, err
 		}
@@ -165,5 +263,20 @@ type UpdateCategoryParams struct {
 
 func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error {
 	_, err := q.db.ExecContext(ctx, updateCategory, arg.Category, arg.ID)
+	return err
+}
+
+const updateProductImages = `-- name: UpdateProductImages :exec
+UPDATE products SET images = ?, long_description = ? WHERE id = ?
+`
+
+type UpdateProductImagesParams struct {
+	Images          string `json:"images"`
+	LongDescription string `json:"long_description"`
+	ID              int64  `json:"id"`
+}
+
+func (q *Queries) UpdateProductImages(ctx context.Context, arg UpdateProductImagesParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductImages, arg.Images, arg.LongDescription, arg.ID)
 	return err
 }
