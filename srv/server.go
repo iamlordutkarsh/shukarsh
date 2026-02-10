@@ -82,6 +82,26 @@ var funcMap = template.FuncMap{
 			return "📦"
 		}
 	},
+	"catGif": func(cat string) string {
+		// Google Noto Animated Emoji GIFs
+		base := "https://fonts.gstatic.com/s/e/notoemoji/latest/"
+		switch cat {
+		case "Nails & Beauty":
+			return base + "1f485/512.gif" // nail polish
+		case "Caps & Accessories":
+			return base + "1f48e/512.gif" // gem
+		case "Fashion & Clothing":
+			return base + "1f49c/512.gif" // purple heart
+		case "Home & Decor":
+			return base + "1f4a1/512.gif" // lightbulb
+		case "Kitchen & Dining":
+			return base + "2615/512.gif" // coffee
+		case "Electronics":
+			return base + "1f4ab/512.gif" // dizzy star
+		default:
+			return base + "1f381/512.gif" // gift
+		}
+	},
 	"catCount": func(m map[string][]dbgen.Product, cat string) int {
 		return len(m[cat])
 	},

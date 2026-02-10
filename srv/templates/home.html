@@ -45,6 +45,9 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
 .cat-circle{width:85px;height:85px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 8px;transition:all .4s cubic-bezier(.22,1,.36,1);border:3px solid transparent;box-shadow:0 4px 12px rgba(169,139,202,.1)}
 .cat-bubble:hover .cat-circle{border-color:var(--lavd);background:var(--white);transform:scale(1.08);box-shadow:0 8px 25px rgba(169,139,202,.2)}
 .cat-bubble.active .cat-circle{border-color:var(--lavd);background:var(--white);box-shadow:0 6px 20px rgba(169,139,202,.25);transform:scale(1.05)}
+.cat-gif{width:48px;height:48px;object-fit:contain;transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.cat-bubble:hover .cat-gif{transform:scale(1.2) rotate(-8deg)}
+.cat-bubble.active .cat-gif{transform:scale(1.15)}
 .cat-name{font-size:.72rem;font-weight:700;color:var(--textl);max-width:85px;transition:color .3s}
 .cat-bubble:hover .cat-name,.cat-bubble.active .cat-name{color:var(--lavd)}
 
@@ -178,12 +181,12 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 <div class="cat-bubbles">
   <div class="cat-row">
     <div class="cat-bubble active" onclick="filterAll(this)">
-      <div class="cat-circle">✨</div>
+      <div class="cat-circle"><img src="https://fonts.gstatic.com/s/e/notoemoji/latest/2728/512.gif" alt="all" class="cat-gif"></div>
       <div class="cat-name">All Products</div>
     </div>
     {{range .Categories}}
     <div class="cat-bubble" onclick="filterCat('{{.}}',this)">
-      <div class="cat-circle">{{catEmoji .}}</div>
+      <div class="cat-circle"><img src="{{catGif .}}" alt="{{.}}" class="cat-gif"></div>
       <div class="cat-name">{{.}}</div>
     </div>
     {{end}}
