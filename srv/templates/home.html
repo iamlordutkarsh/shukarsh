@@ -4,253 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Shukarsh Enterprises ✿</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
-:root{--p:#e8729a;--pl:#f9a8c9;--pd:#c94d7a;--pp:#fde8f0;--lav:#d4a5e5;--pch:#f7c5a8;--bg:#fff5f8;--bg2:#fff0f4;--tx:#4a2035;--txl:#8a5670;--w:#fff;--r:20px}
+:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
-a{text-decoration:none;color:inherit}
-::selection{background:var(--pl)}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+a{text-decoration:none;color:inherit}ul{list-style:none}
+::selection{background:var(--lavl);color:var(--text)}
+img{display:block}
 
-/* CANVAS */
-canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* ANNOUNCEMENT */
+.announce{background:var(--lavd);color:var(--white);text-align:center;padding:10px 16px;font-size:.82rem;font-weight:700;letter-spacing:.5px}
+.announce b{color:#fff}
 
 /* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(255,245,248,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(232,114,154,.08);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 4px 30px rgba(232,114,154,.12)}
-.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p);transition:transform .3s}
-.logo:hover{transform:scale(1.05)}
-.logo span{color:var(--lav)}
-.nav-links a{font-size:.85rem;font-weight:700;color:var(--txl);letter-spacing:1px;transition:color .3s}
-.nav-links a:hover{color:var(--p)}
+nav{background:var(--bg);padding:18px 40px;position:sticky;top:0;z-index:100;transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text);transition:color .3s}
+.nav-links a:hover{color:var(--lavd)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.active span:nth-child(2){opacity:0}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.mobile-menu{position:fixed;inset:0;background:var(--bg);z-index:99;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s}
+.mobile-menu.open{opacity:1;visibility:visible}
+.mobile-menu a{display:block;font-size:1.5rem;font-weight:700;padding:12px;text-align:center;color:var(--text)}
+@media(max-width:768px){.nav-links{display:none}.hamburger{display:flex}nav{padding:14px 20px}}
 
-/* HERO */
-.hero{text-align:center;padding:90px 24px 60px;background:linear-gradient(160deg,#fff5f8,#fce4ec,#f8bbd0,#f48fb1);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.4),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(212,165,229,.25),transparent 50%)}
-.hero-shapes{position:absolute;inset:0;overflow:hidden}
-.hero-shapes span{position:absolute;opacity:.2;animation:drift 6s ease-in-out infinite}
-.hs1{top:10%;left:8%;font-size:2rem;animation-delay:0s}.hs2{top:20%;right:12%;font-size:1.5rem;animation-delay:1s}
-.hs3{bottom:15%;left:15%;font-size:1.8rem;animation-delay:2s}.hs4{bottom:25%;right:8%;font-size:2.2rem;animation-delay:.5s}
-.hs5{top:50%;left:50%;font-size:1.3rem;animation-delay:1.5s}.hs6{top:35%;left:25%;font-size:1.6rem;animation-delay:2.5s}
-@keyframes drift{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-15px) rotate(10deg)}}
-.hero-content{position:relative;z-index:1}
-.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.5rem,7vw,5rem);line-height:1.1;margin-bottom:8px;opacity:0;animation:heroFade .8s .2s forwards}
-.hero h1 em{font-family:'Satisfy',cursive;color:var(--p);font-style:normal}
-.hero>div>.hero-sub{font-size:1.1rem;color:var(--txl);max-width:500px;margin:0 auto 20px;opacity:0;animation:heroFade .8s .4s forwards}
-.badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;opacity:0;animation:heroFade .8s .6s forwards}
-.badge{padding:8px 18px;background:var(--w);border-radius:50px;font-size:.78rem;font-weight:700;box-shadow:0 2px 12px rgba(232,114,154,.1);transition:all .3s;cursor:default}
-.badge:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(232,114,154,.2)}
-.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:30px;opacity:0;animation:heroFade .8s .8s forwards}
-.hero-stat{text-align:center}
-.hero-stat strong{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--pd);display:block}
-.hero-stat small{font-size:.75rem;color:var(--txl);font-weight:600}
-@keyframes heroFade{to{opacity:1;transform:translateY(0)}}
-.hero h1,.hero>div>.hero-sub,.badge-row,.hero-stats{transform:translateY(20px)}
+/* CATEGORY BUBBLES */
+.cat-bubbles{background:var(--bg2);padding:30px 0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cat-bubbles::-webkit-scrollbar{display:none}
+.cat-row{display:flex;gap:28px;padding:0 40px;width:max-content}
+.cat-bubble{text-align:center;cursor:pointer;transition:transform .3s}
+.cat-bubble:hover{transform:translateY(-4px)}
+.cat-circle{width:90px;height:90px;border-radius:50%;background:var(--lavl);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 8px;transition:all .3s;border:3px solid transparent}
+.cat-bubble:hover .cat-circle{border-color:var(--lavd);background:var(--white)}
+.cat-bubble.active .cat-circle{border-color:var(--lavd);background:var(--white);box-shadow:0 4px 15px rgba(169,139,202,.25)}
+.cat-name{font-size:.75rem;font-weight:700;color:var(--textl);max-width:90px}
 
-/* CATEGORY FILTER */
-.filter-bar{position:sticky;top:58px;z-index:90;background:rgba(255,245,248,.95);backdrop-filter:blur(15px);padding:16px 24px;border-bottom:1px solid rgba(232,114,154,.06);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-.filter-inner{max-width:1200px;margin:0 auto;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.filter-btn{padding:8px 20px;border-radius:50px;font-size:.8rem;font-weight:700;cursor:pointer;border:2px solid var(--pl);color:var(--p);background:var(--w);transition:all .3s;white-space:nowrap}
-.filter-btn.active{background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-color:var(--p);box-shadow:0 4px 15px rgba(232,114,154,.25)}
-.filter-btn:hover:not(.active){background:var(--pp)}
-.filter-count{font-size:.65rem;opacity:.7;margin-left:4px}
+/* HERO BANNER */
+.hero-banner{position:relative;background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg));padding:60px 40px;text-align:center;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-50px;right:-50px;width:300px;height:300px;background:var(--lav);border-radius:50%;opacity:.15}
+.hero-banner::after{content:'';position:absolute;bottom:-80px;left:-60px;width:250px;height:250px;background:var(--lavd);border-radius:50%;opacity:.1}
+.hero-banner h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.5rem);position:relative;z-index:1;line-height:1.2}
+.hero-banner h1 em{font-family:'Satisfy',cursive;color:var(--lavd);font-style:normal}
+.hero-banner p{color:var(--textl);margin-top:8px;position:relative;z-index:1;font-size:1rem}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:24px;position:relative;z-index:1}
+.hero-stat strong{font-family:'DM Serif Display',serif;font-size:1.6rem;color:var(--lavd);display:block}
+.hero-stat small{font-size:.7rem;color:var(--textl);font-weight:600;letter-spacing:1px;text-transform:uppercase}
 
-/* PRODUCTS */
-.products-section{max-width:1200px;margin:0 auto;padding:40px 24px 60px;position:relative;z-index:1}
-.cat-section{margin-bottom:50px}
-.cat-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid rgba(232,114,154,.1)}
-.cat-icon{font-size:1.5rem}
-.cat-title{font-family:'DM Serif Display',serif;font-size:1.5rem}
-.cat-count{font-size:.75rem;color:var(--txl);background:var(--pp);padding:3px 10px;border-radius:20px;font-weight:700}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+/* SECTION */
+.section{max-width:1300px;margin:0 auto;padding:50px 40px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.section-title{font-family:'DM Serif Display',serif;font-size:1.8rem}
+.view-all{padding:10px 24px;background:var(--lav);color:var(--white);border-radius:8px;font-size:.8rem;font-weight:700;transition:all .3s}
+.view-all:hover{background:var(--lavd);transform:translateY(-2px)}
 
-/* CARD */
-.card{background:var(--w);border-radius:var(--r);overflow:hidden;border:2px solid transparent;transition:all .5s cubic-bezier(.22,1,.36,1);position:relative;opacity:0;transform:translateY(30px)}
-.card.show{opacity:1;transform:translateY(0)}
-.card:hover{border-color:var(--pl);transform:translateY(-8px);box-shadow:0 20px 50px rgba(232,114,154,.15)}
-.card-img-wrap{position:relative;overflow:hidden}
-.card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--pp);display:block;transition:transform .5s}
-.card:hover .card-img{transform:scale(1.05)}
-.card-img-placeholder{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--pp),var(--bg2));display:flex;align-items:center;justify-content:center;font-size:4rem}
-.card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(74,32,53,.6),transparent 50%);opacity:0;transition:opacity .4s}
-.card:hover .card-overlay{opacity:1}
-.card-body{padding:18px}
-.card-platform{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:1.5px;color:var(--w);margin-bottom:8px}
-.card-platform.meesho{background:linear-gradient(135deg,#e8729a,#c94d7a)}
-.card-platform.amazon{background:linear-gradient(135deg,#ff9900,#e88a00)}
-.card-platform.flipkart{background:linear-gradient(135deg,#2874f0,#1a5dc8)}
-.card-platform.other{background:linear-gradient(135deg,var(--lav),#b57edc)}
-.card-title{font-family:'DM Serif Display',serif;font-size:1.05rem;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-desc{font-size:.78rem;color:var(--txl);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
-.card-price{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--p)}
-.card-price .old{font-size:.8rem;color:#ccc;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif}
-.card-rating{font-size:.75rem;color:var(--txl);margin-top:4px}
-.card-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid rgba(232,114,154,.06)}
-.card-brand{font-size:.7rem;color:var(--txl)}
-.buy-btn{padding:9px 22px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50px;font-size:.75rem;font-weight:700;transition:all .3s;position:relative;overflow:hidden}
-.buy-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--pd),#d81b60);opacity:0;transition:opacity .3s}
-.buy-btn:hover::before{opacity:1}
-.buy-btn span{position:relative;z-index:1}
-.buy-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(232,114,154,.3)}
+/* PRODUCT GRID */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:var(--white);border-radius:var(--r);overflow:hidden;transition:all .4s cubic-bezier(.22,1,.36,1);cursor:pointer}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 35px rgba(0,0,0,.08)}
+.card-img-wrap{position:relative;overflow:hidden;background:var(--lavp)}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover;transition:transform .5s}
+.card:hover .card-img{transform:scale(1.06)}
+.card-ph{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--lavl),var(--bg2));display:flex;align-items:center;justify-content:center;font-size:3rem}
+.card-badge{position:absolute;top:10px;left:10px;padding:4px 10px;border-radius:6px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white)}
+.card-badge.meesho{background:var(--lavd)}
+.card-badge.amazon{background:#ff9900}
+.card-badge.flipkart{background:#2874f0}
+.card-body{padding:14px 16px;text-align:center}
+.card-title{font-size:.88rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:2.4em}
+.card-price{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--text)}
+.card-price .old{font-size:.8rem;color:#bbb;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif;font-weight:400}
+.card-link{display:inline-block;margin-top:10px;padding:8px 20px;border:2px solid var(--lav);border-radius:8px;font-size:.72rem;font-weight:700;color:var(--lavd);letter-spacing:.5px;transition:all .3s}
+.card-link:hover{background:var(--lav);color:var(--white)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(25px);transition:opacity .6s ease,transform .6s ease}
+.reveal.show{opacity:1;transform:translateY(0)}
+
+/* DIVIDER */
+.divider{height:2px;background:linear-gradient(90deg,transparent,var(--lav),transparent);max-width:1300px;margin:0 auto}
+
+/* FOOTER */
+footer{background:var(--lavl);padding:50px 40px 24px}
+.footer-inner{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:40px}
+.footer-inner h3{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:14px}
+.footer-inner p,.footer-inner a{font-size:.88rem;color:var(--textl);line-height:1.8}
+.footer-inner a:hover{color:var(--lavd)}
+.footer-bottom{max-width:1300px;margin:24px auto 0;padding-top:16px;border-top:1px solid rgba(169,139,202,.2);text-align:center;font-size:.78rem;color:var(--textl)}
+.footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:10px}
+
+/* SCROLL TOP */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:var(--lavd);color:var(--white);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(169,139,202,.3)}
+.scroll-top.show{opacity:1;transform:translateY(0)}
+.scroll-top:hover{transform:translateY(-3px);background:var(--lav)}
 
 /* EMPTY */
 .empty{text-align:center;padding:80px 24px}
-.empty-icon{font-size:4rem;margin-bottom:16px}
 .empty h3{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px}
-.empty p{color:var(--txl)}
 
-/* FOOTER */
-footer{text-align:center;padding:40px 24px;background:linear-gradient(135deg,#fce4ec,var(--bg));border-top:2px solid rgba(232,114,154,.06);position:relative;z-index:1}
-.f-logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p);margin-bottom:6px}
-.f-logo span{color:var(--lav)}
-footer p{font-size:.85rem;color:var(--txl)}
-
-/* SCROLL TOP */
-.scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(232,114,154,.3)}
-.scroll-top.show{opacity:1;transform:translateY(0)}
-.scroll-top:hover{transform:translateY(-3px) scale(1.1)}
-
-@media(max-width:600px){
-  .hero-stats{gap:24px}
-  .hero-stat strong{font-size:1.4rem}
-  .filter-inner{justify-content:flex-start}
-}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:12px}.section{padding:30px 16px}.cat-row{gap:16px;padding:0 16px}.cat-circle{width:70px;height:70px;font-size:1.5rem}.hero-banner{padding:40px 16px}}
 </style>
 </head>
 <body>
 
-<canvas id="bg"></canvas>
+<div class="announce">✨ Premium Quality Products · <b>Pan India Delivery</b> · Available on Meesho & Amazon ✨</div>
 
 <nav id="nav">
   <div class="nav-inner">
-    <a href="/" class="logo">Shukarsh<span>✿</span></a>
-    <div class="nav-links"><a href="/">Home</a></div>
+    <a href="/" class="logo">Shukarsh ✿</a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      {{range .Categories}}<li><a href="#cat-{{. | lower}}" onclick="scrollToCat('{{.}}');">{{.}}</a></li>{{end}}
+    </ul>
+    <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-shapes">
-    <span class="hs1">✿</span><span class="hs2">♡</span><span class="hs3">✦</span>
-    <span class="hs4">❀</span><span class="hs5">♡</span><span class="hs6">✿</span>
-  </div>
-  <div class="hero-content">
-    <h1>Shukarsh <em>Enterprises</em></h1>
-    <p class="hero-sub">Premium products curated with love 💕 Available on your favorite platforms</p>
-    <div class="badge-row">
-      <div class="badge">🛒 Amazon</div>
-      <div class="badge">🛍️ Meesho</div>
-      <div class="badge">⚡ Flipkart</div>
-      <div class="badge">🚀 Pan India Delivery</div>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
-      <div class="hero-stat"><strong>3.9★</strong><small>Rating</small></div>
-      <div class="hero-stat"><strong>128+</strong><small>Reviews</small></div>
-      <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
-    </div>
+<div class="mobile-menu" id="mob">
+  <div>
+    <a href="/" onclick="closeMob()">Home</a>
+    {{range .Categories}}<a href="#" onclick="scrollToCat('{{.}}');closeMob();return false">{{.}}</a>{{end}}
   </div>
 </div>
 
 {{if .Products}}
-<div class="filter-bar">
-  <div class="filter-inner">
-    <div class="filter-btn active" onclick="filterCat('all',this)">✨ All<span class="filter-count">({{len .Products}})</span></div>
+<!-- CATEGORY BUBBLES -->
+<div class="cat-bubbles">
+  <div class="cat-row">
+    <div class="cat-bubble active" onclick="filterAll(this)">
+      <div class="cat-circle">✨</div>
+      <div class="cat-name">All Products</div>
+    </div>
     {{range .Categories}}
-    <div class="filter-btn" onclick="filterCat('{{.}}',this)">{{.}}</div>
+    <div class="cat-bubble" onclick="filterCat('{{.}}',this)">
+      <div class="cat-circle">{{catEmoji .}}</div>
+      <div class="cat-name">{{.}}</div>
+    </div>
     {{end}}
   </div>
 </div>
 
-<div class="products-section">
-  {{range .Categories}}
-  <div class="cat-section" data-cat="{{.}}">
-    <div class="cat-header">
-      <span class="cat-icon">{{catEmoji .}}</span>
-      <span class="cat-title">{{.}}</span>
-      <span class="cat-count">{{catCount $.ByCategory .}} items</span>
-    </div>
-    <div class="grid">
-      {{range index $.ByCategory .}}
-      <div class="card" data-category="{{.Category}}">
-        <div class="card-img-wrap">
-          {{if .ImageUrl}}
-          <img class="card-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🛍️</div>'">
-          {{else}}
-          <div class="card-img-placeholder">🛍️</div>
-          {{end}}
-          <div class="card-overlay"></div>
-        </div>
-        <div class="card-body">
-          <div class="card-platform {{.Platform | lower}}">{{.Platform}}</div>
-          <div class="card-title">{{.Title}}</div>
-          {{if .Description}}<div class="card-desc">{{.Description}}</div>{{end}}
-          {{if .Price}}<div class="card-price">{{.Price}}{{if .OriginalPrice}}<span class="old">{{.OriginalPrice}}</span>{{end}}</div>{{end}}
-          {{if .Rating}}<div class="card-rating">⭐ {{.Rating}} / 5</div>{{end}}
-        </div>
-        <div class="card-footer">
-          <span class="card-brand">Shukarsh ✿</span>
-          <a href="{{.Url}}" target="_blank" class="buy-btn"><span>Buy Now →</span></a>
-        </div>
+<!-- HERO -->
+<div class="hero-banner reveal">
+  <h1>Welcome to <em>Shukarsh</em></h1>
+  <p>Your go-to destination for quality products at best prices 💜</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
+    <div class="hero-stat"><strong>3.9★</strong><small>Rating</small></div>
+    <div class="hero-stat"><strong>128+</strong><small>Reviews</small></div>
+    <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
+  </div>
+</div>
+
+<!-- PRODUCT SECTIONS BY CATEGORY -->
+{{range .Categories}}
+<div class="section cat-sec" data-cat="{{.}}">
+  <div class="section-header reveal">
+    <h2 class="section-title" id="cat-{{. | lower}}">{{catEmoji .}} {{.}}</h2>
+    <span class="view-all" onclick="filterCat('{{.}}',null)">View all →</span>
+  </div>
+  <div class="grid">
+    {{range index $.ByCategory .}}
+    <div class="card reveal" data-category="{{.Category}}">
+      <div class="card-img-wrap">
+        {{if .ImageUrl}}
+        <img class="card-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
+        {{else}}
+        <div class="card-ph">🛍️</div>
+        {{end}}
+        <div class="card-badge {{.Platform | lower}}">{{.Platform}}</div>
       </div>
-      {{end}}
+      <div class="card-body">
+        <div class="card-title">{{.Title}}</div>
+        {{if .Price}}<div class="card-price">{{.Price}}{{if .OriginalPrice}}<span class="old">{{.OriginalPrice}}</span>{{end}}</div>{{end}}
+        <a href="{{.Url}}" target="_blank" class="card-link">Buy Now →</a>
+      </div>
     </div>
+    {{end}}
   </div>
-  {{end}}
 </div>
+<div class="divider"></div>
+{{end}}
+
 {{else}}
-<div class="products-section">
-  <div class="empty">
-    <div class="empty-icon">🌸</div>
-    <h3>Products coming soon!</h3>
-    <p>We're adding our curated collection. Stay tuned! 💕</p>
-  </div>
-</div>
+<div class="section"><div class="empty"><h3>Products coming soon! 🌸</h3><p>Stay tuned 💜</p></div></div>
 {{end}}
 
 <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
 <footer>
-  <div class="f-logo">Shukarsh<span>✿</span></div>
-  <p>© 2025 Shukarsh Enterprises · Made with love 💕</p>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Shukarsh ✿</div>
+      <p>Welcome to Shukarsh Enterprises – your go-to destination for quality products and hassle-free shopping. We keep it simple: great products, fair prices, and a commitment to your satisfaction.</p>
+    </div>
+    <div>
+      <h3>Shop</h3>
+      {{range .Categories}}<a href="#" onclick="filterCat('{{.}}',null);return false" style="display:block">{{.}}</a>{{end}}
+    </div>
+    <div>
+      <h3>Find Us On</h3>
+      <a href="https://www.meesho.com/ShuKarshEnterprises" target="_blank" style="display:block">Meesho Store →</a>
+      <a href="#" style="display:block">Amazon (Coming Soon)</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 Shukarsh Enterprises. All rights reserved.</div>
 </footer>
 
 <script>
-// Floating particles
-const c=document.getElementById('bg'),ctx=c.getContext('2d');
-let W,H;function resize(){W=c.width=innerWidth;H=c.height=innerHeight}resize();addEventListener('resize',resize);
-const pts=[];const sym=['♥','✿','✦','♡','·'];const cols=['#e8729a','#f9a8c9','#d4a5e5','#f7c5a8','#f48fb1'];
-for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,s:sym[Math.random()*sym.length|0],c:cols[Math.random()*cols.length|0],sz:Math.random()*12+6,vx:(Math.random()-.5)*.2,vy:-Math.random()*.4-.05,o:Math.random()*.2+.03,r:Math.random()*360,rv:(Math.random()-.5)*.3});
-function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y<-20){p.y=H+20;p.x=Math.random()*W}if(p.x<-20)p.x=W+20;if(p.x>W+20)p.x=-20;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.globalAlpha=p.o;ctx.font=p.sz+'px sans-serif';ctx.fillStyle=p.c;ctx.fillText(p.s,0,0);ctx.restore()});requestAnimationFrame(draw)}draw();
-
-// Sparkle trail
-const sp=[];addEventListener('mousemove',e=>{for(let i=0;i<2;i++)sp.push({x:e.clientX+(Math.random()-.5)*8,y:e.clientY+(Math.random()-.5)*8,sz:Math.random()*4+2,life:1,c:cols[Math.random()*cols.length|0],vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5})});
-function drawSp(){for(let i=sp.length-1;i>=0;i--){const s=sp[i];s.x+=s.vx;s.y+=s.vy;s.life-=.03;s.sz*=.97;if(s.life<=0){sp.splice(i,1);continue}ctx.save();ctx.globalAlpha=s.life;ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(s.x,s.y,s.sz,0,Math.PI*2);ctx.fill();ctx.restore()}requestAnimationFrame(drawSp)}drawSp();
-
 // Nav scroll
 const nav=document.getElementById('nav'),st=document.getElementById('scrollTop');
-addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>50);st.classList.toggle('show',scrollY>400)});
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>50);st.classList.toggle('show',scrollY>400)});
 
-// Scroll reveal cards
-const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('show'),i*60);obs.unobserve(e.target)}})},{threshold:.1});
-document.querySelectorAll('.card').forEach(c=>obs.observe(c));
+// Hamburger
+const ham=document.getElementById('ham'),mob=document.getElementById('mob');
+ham.addEventListener('click',()=>{ham.classList.toggle('active');mob.classList.toggle('open')});
+function closeMob(){ham.classList.remove('active');mob.classList.remove('open')}
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');obs.unobserve(e.target)}})
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
 // Category filter
 function filterCat(cat,el){
-  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.cat-section').forEach(s=>{
-    if(cat==='all'){s.style.display=''}else{s.style.display=s.dataset.cat===cat?'':'none'}
+  document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));
+  if(el)el.classList.add('active');
+  document.querySelectorAll('.cat-sec').forEach(s=>{
+    s.style.display=s.dataset.cat===cat?'':'none';
   });
-  // Re-animate visible cards
-  document.querySelectorAll('.card').forEach(c=>{c.classList.remove('show');obs.observe(c)});
+  document.querySelectorAll('.divider').forEach(d=>d.style.display='none');
+  // Re-observe hidden cards
+  document.querySelectorAll('.card.reveal:not(.show)').forEach(c=>obs.observe(c));
+  window.scrollTo({top:document.querySelector('.cat-bubbles').offsetTop+150,behavior:'smooth'});
 }
-
-// Card tilt
-document.querySelectorAll('.card').forEach(card=>{
-  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform=`translateY(-8px) perspective(600px) rotateX(${-y*6}deg) rotateY(${x*6}deg)`});
-  card.addEventListener('mouseleave',()=>{card.style.transform=''});
-});
+function filterAll(el){
+  document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.cat-sec').forEach(s=>s.style.display='');
+  document.querySelectorAll('.divider').forEach(d=>d.style.display='');
+}
+function scrollToCat(cat){
+  const el=document.querySelector('[data-cat="'+cat+'"]');
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
 </script>
 </body>
 </html>
