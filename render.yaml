@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: shukarsh
+    runtime: docker
+    region: singapore  # closest to India
+    plan: starter      # $7/mo — needed for persistent disk
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DB_PATH
+        value: /data/db.sqlite3
+      - key: UPLOADS_DIR
+        value: /data/uploads
+      - key: ADMIN_PASSWORD
+        generateValue: true
+    disk:
+      name: shukarsh-data
+      mountPath: /data
+      sizeGB: 1

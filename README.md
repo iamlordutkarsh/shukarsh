@@ -2,7 +2,19 @@
 
 Cute kawaii-style product showcase for [Shukarsh Enterprises](https://www.meesho.com/ShuKarshEnterprises). Built with Go + SQLite.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/iamlordutkarsh/shukarsh)
+
 [![Deploy on Fly.io](https://img.shields.io/badge/Deploy%20on-Fly.io-8b5cf6?style=for-the-badge&logo=fly.io)](https://fly.io/docs/getting-started/)
+
+## 🚀 Deploy to Render (One Click)
+
+1. Click the **Deploy to Render** button above
+2. Sign in / create a free Render account
+3. Render auto-fills everything from `render.yaml` — just click **Apply**
+4. Wait ~2 min for build → your site is live at `https://shukarsh.onrender.com`
+
+> **Note:** Render auto-generates your `ADMIN_PASSWORD`. Find it in **Dashboard → shukarsh → Environment**.
+> Persistent disk requires Starter plan ($7/mo). Free plan works but data resets on redeploy.
 
 ## 🚀 Deploy to Fly.io (2 commands)
 
