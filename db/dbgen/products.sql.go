@@ -266,6 +266,55 @@ func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) 
 	return err
 }
 
+const updateProduct = `-- name: UpdateProduct :exec
+UPDATE products SET
+  title = ?,
+  price = ?,
+  original_price = ?,
+  image_url = ?,
+  description = ?,
+  rating = ?,
+  category = ?,
+  images = ?,
+  long_description = ?,
+  url = ?,
+  platform = ?
+WHERE id = ?
+`
+
+type UpdateProductParams struct {
+	Title           string `json:"title"`
+	Price           string `json:"price"`
+	OriginalPrice   string `json:"original_price"`
+	ImageUrl        string `json:"image_url"`
+	Description     string `json:"description"`
+	Rating          string `json:"rating"`
+	Category        string `json:"category"`
+	Images          string `json:"images"`
+	LongDescription string `json:"long_description"`
+	Url             string `json:"url"`
+	Platform        string `json:"platform"`
+	ID              int64  `json:"id"`
+}
+
+func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) error {
+	_, err := q.db.ExecContext(ctx, updateProduct,
+		arg.Title,
+		arg.Price,
+		arg.OriginalPrice,
+		arg.ImageUrl,
+		arg.Description,
+		arg.Rating,
+		arg.Category,
+		arg.Images,
+		arg.LongDescription,
+		arg.Url,
+		arg.Platform,
+		arg.ID,
+	)
+	return err
+}
+
 const updateProductImages = `-- name: UpdateProductImages :exec
 UPDATE products SET images = ?, long_description = ? WHERE id = ?
 `

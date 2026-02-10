@@ -56,8 +56,10 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("GET /search", s.handleSearch)
 	mux.HandleFunc("GET /admin", s.handleAdmin)
 	mux.HandleFunc("POST /api/add", s.handleAddProduct)
+	mux.HandleFunc("POST /api/update/{id}", s.handleUpdateProduct)
 	mux.HandleFunc("POST /api/delete/{id}", s.handleDeleteProduct)
 	mux.HandleFunc("GET /api/products", s.handleListProducts)
+	mux.HandleFunc("GET /api/product/{id}", s.handleGetProduct)
 	mux.HandleFunc("GET /img", handleImageProxy)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(s.StaticDir))))
 	slog.Info("starting server", "addr", addr)
@@ -310,6 +312,91 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]any{"ok": true, "product": p})
 }
 
+func (s *Server) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonError(w, "Invalid ID", 400)
+		return
+	}
+	q := dbgen.New(s.DB)
+	// Get existing product first
+	p, err := q.GetProduct(r.Context(), id)
+	if err != nil {
+		jsonError(w, "Product not found", 404)
+		return
+	}
+
+	// Update only fields that are provided
+	title := r.FormValue("title")
+	if title == "" {
+		title = p.Title
+	}
+	price := r.FormValue("price")
+	if price == "" {
+		price = p.Price
+	}
+	origPrice := r.FormValue("original_price")
+	if origPrice == "" {
+		origPrice = p.OriginalPrice
+	}
+	imageUrl := r.FormValue("image_url")
+	if imageUrl == "" {
+		imageUrl = p.ImageUrl
+	}
+	desc := r.FormValue("description")
+	if desc == "" {
+		desc = p.Description
+	}
+	rating := r.FormValue("rating")
+	if rating == "" {
+		rating = p.Rating
+	}
+	category := r.FormValue("category")
+	if category == "" {
+		category = p.Category
+	}
+	images := r.FormValue("images")
+	if images == "" {
+		images = p.Images
+	}
+	longDesc := r.FormValue("long_description")
+	if longDesc == "" {
+		longDesc = p.LongDescription
+	}
+	url := r.FormValue("url")
+	if url == "" {
+		url = p.Url
+	}
+	platform := r.FormValue("platform")
+	if platform == "" {
+		platform = p.Platform
+	}
+
+	err = q.UpdateProduct(r.Context(), dbgen.UpdateProductParams{
+		Title:           title,
+		Price:           price,
+		OriginalPrice:   origPrice,
+		ImageUrl:        imageUrl,
+		Description:     desc,
+		Rating:          rating,
+		Category:        category,
+		Images:          images,
+		LongDescription: longDesc,
+		Url:             url,
+		Platform:        platform,
+		ID:              id,
+	})
+	if err != nil {
+		jsonError(w, "Failed to update: "+err.Error(), 500)
+		return
+	}
+
+	updated, _ := q.GetProduct(r.Context(), id)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]any{"ok": true, "product": updated})
+}
+
 func (s *Server) handleDeleteProduct(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -321,6 +408,23 @@ func (s *Server) handleDeleteProduct(w http.ResponseWriter, r *http.Request) {
 	q.DeleteProduct(r.Context(), id)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]any{"ok": true})
+}
+
+func (s *Server) handleGetProduct(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonError(w, "Invalid ID", 400)
+		return
+	}
+	q := dbgen.New(s.DB)
+	p, err := q.GetProduct(r.Context(), id)
+	if err != nil {
+		jsonError(w, "Product not found", 404)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(p)
 }
 
 func (s *Server) handleListProducts(w http.ResponseWriter, r *http.Request) {

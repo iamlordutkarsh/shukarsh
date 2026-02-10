@@ -6,40 +6,42 @@
 <title>Admin ✿ Shukarsh</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
-:root{--p:#e8729a;--pl:#f9a8c9;--pd:#c94d7a;--pp:#fde8f0;--lav:#d4a5e5;--bg:#fff5f8;--bg2:#fff0f4;--tx:#4a2035;--txl:#8a5670;--w:#fff;--r:16px}
+:root{--p:#a78bca;--pl:#c9b3e8;--pd:#8b6aae;--pp:#f0eaf8;--lav:#c9b3e8;--bg:#faf0e4;--bg2:#f3e4d0;--tx:#2c2137;--txl:#6b5e7b;--w:#fff;--r:16px;--green:#4caf50;--red:#e53935}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
-a{text-decoration:none;color:inherit}
+a{text-decoration:none;color:inherit}img{display:block}
 
-nav{position:sticky;top:0;z-index:100;background:rgba(255,245,248,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(232,114,154,.08)}
-.nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+nav{position:sticky;top:0;z-index:100;background:rgba(250,240,228,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(167,139,202,.08)}
+.nav-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
 .logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p)}
-.logo span{color:var(--lav)}
+.logo span{color:var(--pd)}
 .back-btn{padding:8px 20px;border:2px solid var(--pl);border-radius:50px;font-size:.8rem;font-weight:700;color:var(--p);transition:all .3s}
 .back-btn:hover{background:var(--p);color:var(--w)}
 
-.container{max-width:900px;margin:0 auto;padding:40px 24px}
+.container{max-width:960px;margin:0 auto;padding:40px 24px}
 h1{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:8px}
 h1 i{font-family:'Satisfy',cursive;color:var(--p);font-style:normal}
 .subtitle{color:var(--txl);margin-bottom:32px}
 
-/* TABS */
-.tabs{display:flex;gap:8px;margin-bottom:24px}
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
 .tab{padding:10px 24px;border-radius:50px;font-weight:700;font-size:.85rem;cursor:pointer;border:2px solid var(--pl);color:var(--p);background:var(--w);transition:all .3s}
 .tab.active{background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-color:var(--p)}
 
-/* CARDS */
-.add-box{background:var(--w);border-radius:var(--r);padding:28px;box-shadow:0 4px 20px rgba(232,114,154,.08);margin-bottom:40px}
+.add-box{background:var(--w);border-radius:var(--r);padding:28px;box-shadow:0 4px 20px rgba(167,139,202,.08);margin-bottom:40px}
 .add-box h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
 .form-row{display:flex;gap:12px;margin-bottom:12px}
-input[type=text],input[type=url],textarea{width:100%;padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s;color:var(--tx);background:var(--w)}
-input:focus,textarea:focus{border-color:var(--p)}
+input[type=text],input[type=url],textarea,select{width:100%;padding:13px 18px;border:2px solid rgba(167,139,202,.15);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;transition:border-color .3s;color:var(--tx);background:var(--w)}
+input:focus,textarea:focus,select:focus{border-color:var(--p)}
 input::placeholder,textarea::placeholder{color:var(--pl)}
 textarea{resize:vertical;min-height:60px}
-select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.92rem;outline:none;background:var(--w);color:var(--tx);cursor:pointer}
 .btn{padding:13px 28px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;transition:all .3s;white-space:nowrap}
-.btn:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(232,114,154,.3)}
+.btn:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(167,139,202,.3)}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-sm{padding:8px 16px;font-size:.78rem;border-radius:10px}
+.btn-outline{background:none;border:2px solid var(--pl);color:var(--p)}
+.btn-outline:hover{background:var(--pp)}
+.btn-danger{background:linear-gradient(135deg,var(--red),#c62828)}
+.btn-danger:hover{box-shadow:0 6px 20px rgba(229,57,53,.3)}
 
 .msg{padding:12px 18px;border-radius:10px;margin-top:14px;font-size:.9rem;font-weight:600;display:none}
 .msg.ok{display:block;background:#e8f5e9;color:#2e7d32}
@@ -48,9 +50,45 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
 
 .panel{display:none}
 .panel.active{display:block}
-
 .field-label{font-size:.8rem;font-weight:700;color:var(--txl);margin-bottom:4px;display:block}
 .field-group{margin-bottom:14px}
+.hint{font-size:.8rem;color:var(--txl);margin-top:8px;line-height:1.6}
+
+/* PRODUCT LIST */
+.prod-list h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
+.prod-card{background:var(--w);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:all .3s}
+.prod-card:hover{box-shadow:0 6px 24px rgba(167,139,202,.12)}
+.prod-top{display:flex;gap:16px;align-items:center}
+.prod-thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--pp);flex-shrink:0}
+.prod-thumb-ph{width:64px;height:64px;border-radius:12px;background:var(--pp);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.prod-info{flex:1;min-width:0}
+.prod-title{font-weight:700;font-size:.92rem;margin-bottom:2px}
+.prod-meta{font-size:.75rem;color:var(--txl)}
+.prod-meta b{color:var(--p)}
+.prod-actions{display:flex;gap:8px;flex-shrink:0}
+
+/* IMAGE GALLERY IN EDIT */
+.img-gallery{margin-top:14px;padding-top:14px;border-top:1px solid rgba(167,139,202,.1)}
+.img-gallery-title{font-size:.82rem;font-weight:700;color:var(--txl);margin-bottom:10px}
+.img-grid{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.img-slot{position:relative;width:90px;height:90px;border-radius:12px;overflow:hidden;background:var(--pp);border:2px solid transparent;transition:all .3s;cursor:pointer}
+.img-slot img{width:100%;height:100%;object-fit:cover}
+.img-slot.default{border-color:var(--p);box-shadow:0 2px 10px rgba(167,139,202,.25)}
+.img-slot .img-badge{position:absolute;top:4px;left:4px;padding:2px 6px;background:var(--p);color:var(--w);border-radius:6px;font-size:.55rem;font-weight:800;letter-spacing:.5px}
+.img-slot .img-remove{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(229,57,53,.85);color:var(--w);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;cursor:pointer;opacity:0;transition:opacity .2s}
+.img-slot:hover .img-remove{opacity:1}
+.img-slot .img-set-default{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);padding:2px 8px;background:rgba(255,255,255,.9);border-radius:6px;font-size:.55rem;font-weight:700;color:var(--p);opacity:0;transition:opacity .2s;white-space:nowrap;cursor:pointer}
+.img-slot:hover .img-set-default{opacity:1}
+.add-img-row{display:flex;gap:8px}
+.add-img-row input{flex:1}
+.add-img-row button{flex-shrink:0}
+
+/* EDIT PANEL */
+.edit-panel{display:none;margin-top:14px;padding-top:14px;border-top:1px solid rgba(167,139,202,.1)}
+.edit-panel.open{display:block}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.edit-grid .field-group{margin-bottom:8px}
+.edit-actions{display:flex;gap:8px;margin-top:12px}
 
 /* PREVIEW */
 .preview{margin-top:16px;padding:16px;border:2px dashed var(--pl);border-radius:12px;display:none}
@@ -59,21 +97,16 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
 .preview-info h4{font-size:.95rem;margin-bottom:4px}
 .preview-info p{font-size:.8rem;color:var(--txl)}
 
-/* PRODUCTS LIST */
-.prod-list h2{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:16px}
-.prod-item{display:flex;align-items:center;gap:16px;background:var(--w);border-radius:14px;padding:14px 18px;margin-bottom:10px;box-shadow:0 2px 10px rgba(232,114,154,.05);transition:all .3s}
-.prod-item:hover{box-shadow:0 6px 20px rgba(232,114,154,.1)}
-.prod-img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--pp);flex-shrink:0}
-.prod-img-ph{width:56px;height:56px;border-radius:10px;background:var(--pp);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
-.prod-info{flex:1;min-width:0}
-.prod-title{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.prod-meta{font-size:.75rem;color:var(--txl)}
-.prod-meta b{color:var(--p)}
-.del-btn{padding:8px 14px;border:2px solid #f8bbd0;border-radius:10px;background:none;font-size:.75rem;font-weight:700;color:var(--pd);cursor:pointer;transition:all .3s;flex-shrink:0}
-.del-btn:hover{background:var(--pd);color:var(--w);border-color:var(--pd)}
 .empty-msg{text-align:center;padding:40px;color:var(--txl);font-style:italic}
-.hint{font-size:.8rem;color:var(--txl);margin-top:8px;line-height:1.6}
-@media(max-width:600px){.form-row{flex-direction:column}}
+
+/* MODAL OVERLAY */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--w);border-radius:20px;padding:32px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal h2{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:16px}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--pp);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem}
+
+@media(max-width:600px){.form-row{flex-direction:column}.edit-grid{grid-template-columns:1fr}.prod-actions{flex-direction:column}.img-slot{width:72px;height:72px}}
 </style>
 </head>
 <body>
@@ -84,8 +117,8 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
 </div></nav>
 
 <div class="container">
-  <h1>Add <i>Products</i> ✿</h1>
-  <p class="subtitle">Add products from Meesho, Amazon, Flipkart or manually</p>
+  <h1>Manage <i>Products</i> ✿</h1>
+  <p class="subtitle">Add, edit images & details for your products</p>
 
   <div class="tabs">
     <div class="tab active" onclick="switchTab('url')">🔗 From URL</div>
@@ -93,10 +126,9 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
   </div>
 
   <div class="add-box">
-    <!-- URL MODE -->
     <div class="panel active" id="panel-url">
       <h2>🔗 Paste Product URL</h2>
-      <p class="hint">⚠️ Some sites (Meesho, Amazon) block auto-fetch. If it doesn't work, use Manual Entry and just paste the image URL + details.</p>
+      <p class="hint">⚠️ Some sites block auto-fetch. Use Manual Entry if needed.</p>
       <form id="urlForm" class="form-row" style="margin-top:14px">
         <input type="url" id="urlInput" placeholder="https://www.meesho.com/product/..." required>
         <button type="submit" class="btn" id="urlBtn">✿ Fetch</button>
@@ -104,7 +136,6 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
       <div class="msg" id="urlMsg"></div>
     </div>
 
-    <!-- MANUAL MODE -->
     <div class="panel" id="panel-manual">
       <h2>✏️ Add Product Manually</h2>
       <form id="manualForm">
@@ -122,13 +153,16 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
           <div class="field-group" style="flex:1"><label class="field-label">Rating</label>
             <input type="text" name="rating" placeholder="4.2"></div>
         </div>
+        <div class="form-row">
+          <div class="field-group" style="flex:1"><label class="field-label">Category</label>
+            <select name="category"><option value="">Auto-detect</option><option value="Nails & Beauty">Nails & Beauty</option><option value="Caps & Accessories">Caps & Accessories</option><option value="Fashion & Clothing">Fashion & Clothing</option><option value="Home & Decor">Home & Decor</option><option value="Kitchen & Dining">Kitchen & Dining</option><option value="Electronics">Electronics</option><option value="Other">Other</option></select></div>
+        </div>
         <div class="field-group"><label class="field-label">Product URL</label>
           <input type="url" name="url" placeholder="https://www.meesho.com/..."></div>
-        <div class="field-group"><label class="field-label">Image URL</label>
-          <input type="url" name="image_url" id="imgUrlInput" placeholder="https://... (right-click product image → Copy Image Address)" oninput="previewImage(this.value)"></div>
-        <div class="preview" id="imgPreview"><img id="previewImg" src=""><div class="preview-info"><h4>Image Preview</h4><p>Looking good! 💕</p></div></div>
+        <div class="field-group"><label class="field-label">Main Image URL</label>
+          <input type="url" name="image_url" placeholder="Right-click product image → Copy Image Address"></div>
         <div class="field-group"><label class="field-label">Description</label>
-          <textarea name="description" placeholder="Short description of the product..."></textarea></div>
+          <textarea name="description" placeholder="Short description..."></textarea></div>
         <button type="submit" class="btn">✿ Add Product</button>
       </form>
       <div class="msg" id="manualMsg"></div>
@@ -139,22 +173,83 @@ select{padding:13px 18px;border:2px solid rgba(232,114,154,.12);border-radius:12
     <h2>📦 Your Products ({{len .Products}})</h2>
     {{if .Products}}
       {{range .Products}}
-      <div class="prod-item" id="prod-{{.ID}}">
-        {{if .ImageUrl}}<img class="prod-img" src="{{.ImageUrl}}" onerror="this.outerHTML='<div class=prod-img-ph>📦</div>'">{{else}}<div class="prod-img-ph">📦</div>{{end}}
-        <div class="prod-info">
-          <div class="prod-title">{{.Title}}</div>
-          <div class="prod-meta"><b>{{.Platform}}</b> · {{if .Price}}{{.Price}}{{else}}Price N/A{{end}}</div>
+      <div class="prod-card" id="prod-{{.ID}}" data-id="{{.ID}}">
+        <div class="prod-top">
+          {{if .ImageUrl}}<img class="prod-thumb" src="/img?url={{.ImageUrl}}" onerror="this.outerHTML='<div class=prod-thumb-ph>📦</div>'">{{else}}<div class="prod-thumb-ph">📦</div>{{end}}
+          <div class="prod-info">
+            <div class="prod-title">{{.Title}}</div>
+            <div class="prod-meta"><b>{{.Platform}}</b> · {{if .Price}}{{.Price}}{{else}}No price{{end}} · {{if .Category}}{{.Category}}{{else}}Uncategorized{{end}}</div>
+          </div>
+          <div class="prod-actions">
+            <button class="btn btn-sm btn-outline" onclick="toggleEdit({{.ID}})">✏️ Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="delProduct({{.ID}})">🗑</button>
+          </div>
         </div>
-        <button class="del-btn" onclick="delProduct({{.ID}})">🗑 Delete</button>
+
+        <!-- EDIT PANEL (hidden by default) -->
+        <div class="edit-panel" id="edit-{{.ID}}">
+          <!-- IMAGE GALLERY -->
+          <div class="img-gallery">
+            <div class="img-gallery-title">🖼️ Product Images <span style="font-weight:400;color:var(--txl)">(click to set as default)</span></div>
+            <div class="img-grid" id="imgs-{{.ID}}"></div>
+            <div class="add-img-row">
+              <input type="url" id="newimg-{{.ID}}" placeholder="Paste image URL here...">
+              <button class="btn btn-sm" onclick="addImage({{.ID}})">+ Add Image</button>
+            </div>
+          </div>
+
+          <!-- EDIT FIELDS -->
+          <div style="margin-top:16px">
+            <div class="img-gallery-title">📝 Product Details</div>
+            <div class="edit-grid">
+              <div class="field-group"><label class="field-label">Title</label>
+                <input type="text" id="ed-title-{{.ID}}" value="{{.Title}}"></div>
+              <div class="field-group"><label class="field-label">Price</label>
+                <input type="text" id="ed-price-{{.ID}}" value="{{.Price}}"></div>
+              <div class="field-group"><label class="field-label">Original Price</label>
+                <input type="text" id="ed-origprice-{{.ID}}" value="{{.OriginalPrice}}"></div>
+              <div class="field-group"><label class="field-label">Rating</label>
+                <input type="text" id="ed-rating-{{.ID}}" value="{{.Rating}}"></div>
+              <div class="field-group"><label class="field-label">Category</label>
+                <select id="ed-cat-{{.ID}}">
+                  <option value="Nails & Beauty" {{if eq .Category "Nails & Beauty"}}selected{{end}}>Nails & Beauty</option>
+                  <option value="Caps & Accessories" {{if eq .Category "Caps & Accessories"}}selected{{end}}>Caps & Accessories</option>
+                  <option value="Fashion & Clothing" {{if eq .Category "Fashion & Clothing"}}selected{{end}}>Fashion & Clothing</option>
+                  <option value="Home & Decor" {{if eq .Category "Home & Decor"}}selected{{end}}>Home & Decor</option>
+                  <option value="Kitchen & Dining" {{if eq .Category "Kitchen & Dining"}}selected{{end}}>Kitchen & Dining</option>
+                  <option value="Electronics" {{if eq .Category "Electronics"}}selected{{end}}>Electronics</option>
+                  <option value="Other" {{if eq .Category "Other"}}selected{{end}}>Other</option>
+                </select></div>
+              <div class="field-group"><label class="field-label">Platform</label>
+                <select id="ed-platform-{{.ID}}">
+                  <option value="Meesho" {{if eq .Platform "Meesho"}}selected{{end}}>Meesho</option>
+                  <option value="Amazon" {{if eq .Platform "Amazon"}}selected{{end}}>Amazon</option>
+                  <option value="Flipkart" {{if eq .Platform "Flipkart"}}selected{{end}}>Flipkart</option>
+                  <option value="Other" {{if eq .Platform "Other"}}selected{{end}}>Other</option>
+                </select></div>
+            </div>
+            <div class="field-group"><label class="field-label">Product URL</label>
+              <input type="url" id="ed-url-{{.ID}}" value="{{.Url}}"></div>
+            <div class="field-group"><label class="field-label">Description (shows on product page)</label>
+              <textarea id="ed-desc-{{.ID}}" rows="3">{{.LongDescription}}</textarea></div>
+          </div>
+
+          <div class="edit-actions">
+            <button class="btn" onclick="saveProduct({{.ID}})">💾 Save Changes</button>
+            <button class="btn btn-sm btn-outline" onclick="toggleEdit({{.ID}})">Cancel</button>
+          </div>
+          <div class="msg" id="editmsg-{{.ID}}"></div>
+        </div>
       </div>
       {{end}}
     {{else}}
-      <div class="empty-msg" id="emptyMsg">No products yet. Add your first one! 🌸</div>
+      <div class="empty-msg">No products yet. Add your first one! 🌸</div>
     {{end}}
   </div>
 </div>
 
 <script>
+// Tab switching
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -162,41 +257,168 @@ function switchTab(tab) {
   document.getElementById('panel-' + tab).classList.add('active');
 }
 
-function previewImage(url) {
-  const p = document.getElementById('imgPreview');
-  const img = document.getElementById('previewImg');
-  if (url.trim()) { img.src = url; p.classList.add('show'); }
-  else { p.classList.remove('show'); }
+// Track images per product: { productId: { images: [...urls], defaultUrl: '...' } }
+const productData = {};
+
+// Initialize product image data from server
+async function initProductImages() {
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  products.forEach(p => {
+    let imgs = [];
+    try { imgs = JSON.parse(p.images || '[]'); } catch(e) {}
+    // Deduplicate by base URL (ignore ?width= params)
+    const seen = new Set();
+    const unique = [];
+    imgs.forEach(url => {
+      const base = url.split('?')[0];
+      if (!seen.has(base)) { seen.add(base); unique.push(url); }
+    });
+    // If main image not in list, add it first
+    if (p.image_url && !unique.some(u => u.split('?')[0] === p.image_url.split('?')[0])) {
+      unique.unshift(p.image_url);
+    }
+    productData[p.id] = { images: unique, defaultUrl: p.image_url };
+    renderImageGrid(p.id);
+  });
 }
 
-// URL FORM
+function renderImageGrid(id) {
+  const grid = document.getElementById('imgs-' + id);
+  if (!grid) return;
+  const data = productData[id];
+  if (!data) return;
+  
+  grid.innerHTML = '';
+  if (data.images.length === 0) {
+    grid.innerHTML = '<div style="font-size:.82rem;color:var(--txl);padding:8px 0">No images yet. Add one below!</div>';
+    return;
+  }
+  
+  data.images.forEach((url, i) => {
+    const isDefault = url.split('?')[0] === (data.defaultUrl || '').split('?')[0];
+    const slot = document.createElement('div');
+    slot.className = 'img-slot' + (isDefault ? ' default' : '');
+    slot.innerHTML = `
+      <img src="/img?url=${encodeURIComponent(url)}" onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"><rect fill=\"%23f0eaf8\"/></svg>'">
+      ${isDefault ? '<div class="img-badge">DEFAULT</div>' : ''}
+      <div class="img-remove" onclick="event.stopPropagation();removeImage(${id},${i})">✕</div>
+      ${!isDefault ? '<div class="img-set-default" onclick="event.stopPropagation();setDefault('+id+','+i+')">Set Default</div>' : ''}
+    `;
+    if (!isDefault) {
+      slot.addEventListener('click', () => setDefault(id, i));
+    }
+    grid.appendChild(slot);
+  });
+}
+
+function addImage(id) {
+  const input = document.getElementById('newimg-' + id);
+  const url = input.value.trim();
+  if (!url) return;
+  if (!productData[id]) productData[id] = { images: [], defaultUrl: '' };
+  productData[id].images.push(url);
+  // If no default set, make this the default
+  if (!productData[id].defaultUrl) {
+    productData[id].defaultUrl = url;
+  }
+  input.value = '';
+  renderImageGrid(id);
+}
+
+function removeImage(id, index) {
+  const data = productData[id];
+  if (!data) return;
+  const removed = data.images.splice(index, 1)[0];
+  // If removed was default, set first remaining as default
+  if (removed.split('?')[0] === (data.defaultUrl || '').split('?')[0]) {
+    data.defaultUrl = data.images[0] || '';
+  }
+  renderImageGrid(id);
+}
+
+function setDefault(id, index) {
+  const data = productData[id];
+  if (!data || !data.images[index]) return;
+  data.defaultUrl = data.images[index];
+  // Move default to first position
+  const img = data.images.splice(index, 1)[0];
+  data.images.unshift(img);
+  renderImageGrid(id);
+}
+
+function toggleEdit(id) {
+  const panel = document.getElementById('edit-' + id);
+  panel.classList.toggle('open');
+}
+
+async function saveProduct(id) {
+  const msg = document.getElementById('editmsg-' + id);
+  msg.className = 'msg loading'; msg.textContent = 'Saving...';
+  
+  const data = productData[id] || { images: [], defaultUrl: '' };
+  const fd = new FormData();
+  fd.append('title', document.getElementById('ed-title-' + id).value);
+  fd.append('price', document.getElementById('ed-price-' + id).value);
+  fd.append('original_price', document.getElementById('ed-origprice-' + id).value);
+  fd.append('rating', document.getElementById('ed-rating-' + id).value);
+  fd.append('category', document.getElementById('ed-cat-' + id).value);
+  fd.append('platform', document.getElementById('ed-platform-' + id).value);
+  fd.append('url', document.getElementById('ed-url-' + id).value);
+  fd.append('long_description', document.getElementById('ed-desc-' + id).value);
+  fd.append('image_url', data.defaultUrl || '');
+  fd.append('images', JSON.stringify(data.images));
+  
+  try {
+    const res = await fetch('/api/update/' + id, { method: 'POST', body: fd });
+    const result = await res.json();
+    if (result.error) throw new Error(result.error);
+    msg.className = 'msg ok'; msg.textContent = '✅ Saved!';
+    // Update thumbnail
+    const thumb = document.querySelector('#prod-' + id + ' .prod-thumb');
+    if (thumb && data.defaultUrl) thumb.src = '/img?url=' + encodeURIComponent(data.defaultUrl);
+    // Update title & meta
+    const titleEl = document.querySelector('#prod-' + id + ' .prod-title');
+    if (titleEl) titleEl.textContent = document.getElementById('ed-title-' + id).value;
+    setTimeout(() => { msg.style.display = 'none'; }, 2000);
+  } catch(err) {
+    msg.className = 'msg err'; msg.textContent = '❌ ' + err.message;
+  }
+}
+
+async function delProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  await fetch('/api/delete/' + id, { method: 'POST' });
+  document.getElementById('prod-' + id)?.remove();
+}
+
+// URL form
 document.getElementById('urlForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('urlBtn');
   const msg = document.getElementById('urlMsg');
   const url = document.getElementById('urlInput').value.trim();
   btn.disabled = true; btn.textContent = '⏳ Fetching...';
-  msg.className = 'msg loading'; msg.textContent = '🔍 Scraping product data...';
+  msg.className = 'msg loading'; msg.textContent = '🔍 Scraping...';
   try {
     const fd = new FormData(); fd.append('url', url); fd.append('mode', 'url');
-    const res = await fetch('/api/add', {method:'POST', body:fd});
+    const res = await fetch('/api/add', { method: 'POST', body: fd });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
-    msg.className = 'msg ok';
-    msg.textContent = '✅ Added: ' + (data.product?.title || 'Product');
+    msg.className = 'msg ok'; msg.textContent = '✅ Added: ' + (data.product?.title || 'Product');
     setTimeout(() => location.reload(), 1000);
   } catch(err) { msg.className = 'msg err'; msg.textContent = '❌ ' + err.message; }
   btn.disabled = false; btn.textContent = '✿ Fetch';
 });
 
-// MANUAL FORM
+// Manual form
 document.getElementById('manualForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const msg = document.getElementById('manualMsg');
   const fd = new FormData(e.target); fd.append('mode', 'manual');
   msg.className = 'msg loading'; msg.textContent = 'Adding...';
   try {
-    const res = await fetch('/api/add', {method:'POST', body:fd});
+    const res = await fetch('/api/add', { method: 'POST', body: fd });
     const data = await res.json();
     if (data.error) throw new Error(data.error);
     msg.className = 'msg ok'; msg.textContent = '✅ Added: ' + (data.product?.title || 'Product');
@@ -204,11 +426,8 @@ document.getElementById('manualForm').addEventListener('submit', async (e) => {
   } catch(err) { msg.className = 'msg err'; msg.textContent = '❌ ' + err.message; }
 });
 
-async function delProduct(id) {
-  if (!confirm('Delete this product?')) return;
-  await fetch('/api/delete/' + id, {method:'POST'});
-  document.getElementById('prod-' + id)?.remove();
-}
+// Initialize
+initProductImages();
 </script>
 </body>
 </html>

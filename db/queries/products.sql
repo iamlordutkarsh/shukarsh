@@ -26,3 +26,18 @@ UPDATE products SET images = ?, long_description = ? WHERE id = ?;
 
 -- name: ListProductsByCategory :many
 SELECT * FROM products WHERE category = ? ORDER BY added_at DESC;
+
+-- name: UpdateProduct :exec
+UPDATE products SET
+  title = ?,
+  price = ?,
+  original_price = ?,
+  image_url = ?,
+  description = ?,
+  rating = ?,
+  category = ?,
+  images = ?,
+  long_description = ?,
+  url = ?,
+  platform = ?
+WHERE id = ?;
