@@ -25,6 +25,7 @@ type Product struct {
 	Description   string    `json:"description"`
 	Rating        string    `json:"rating"`
 	AddedAt       time.Time `json:"added_at"`
+	Category      string    `json:"category"`
 }
 
 type Visitor struct {

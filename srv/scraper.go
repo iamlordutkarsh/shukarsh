@@ -209,3 +209,23 @@ func firstNonEmpty(vals ...string) string {
 	}
 	return ""
 }
+
+func autoCategory(title string) string {
+	l := strings.ToLower(title)
+	switch {
+	case strings.Contains(l, "nail"):
+		return "Nails & Beauty"
+	case strings.Contains(l, "cap") || strings.Contains(l, "hat") || strings.Contains(l, "beanie"):
+		return "Caps & Accessories"
+	case strings.Contains(l, "sweatshirt") || strings.Contains(l, "hoodie") || strings.Contains(l, "shirt") || strings.Contains(l, "kurti") || strings.Contains(l, "dress"):
+		return "Fashion & Clothing"
+	case strings.Contains(l, "lamp") || strings.Contains(l, "light") || strings.Contains(l, "led"):
+		return "Home & Decor"
+	case strings.Contains(l, "bottle") || strings.Contains(l, "jar") || strings.Contains(l, "container") || strings.Contains(l, "mug") || strings.Contains(l, "cup") || strings.Contains(l, "tumbler") || strings.Contains(l, "sipper"):
+		return "Kitchen & Dining"
+	case strings.Contains(l, "phone") || strings.Contains(l, "charger") || strings.Contains(l, "earphone") || strings.Contains(l, "gadget"):
+		return "Electronics"
+	default:
+		return "Other"
+	}
+}

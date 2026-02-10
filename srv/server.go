@@ -62,7 +62,30 @@ func (s *Server) Serve(addr string) error {
 	return http.ListenAndServe(addr, mux)
 }
 
-var funcMap = template.FuncMap{"lower": strings.ToLower}
+var funcMap = template.FuncMap{
+	"lower": strings.ToLower,
+	"catEmoji": func(cat string) string {
+		switch cat {
+		case "Nails & Beauty":
+			return "💅"
+		case "Caps & Accessories":
+			return "🧢"
+		case "Fashion & Clothing":
+			return "👗"
+		case "Home & Decor":
+			return "🏠"
+		case "Kitchen & Dining":
+			return "🍽️"
+		case "Electronics":
+			return "📱"
+		default:
+			return "📦"
+		}
+	},
+	"catCount": func(m map[string][]dbgen.Product, cat string) int {
+		return len(m[cat])
+	},
+}
 
 func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 	q := dbgen.New(s.DB)
@@ -71,13 +94,30 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	// Build category list and grouped products
+	catMap := map[string][]dbgen.Product{}
+	catOrder := []string{}
+	for _, p := range products {
+		cat := p.Category
+		if cat == "" {
+			cat = "Other"
+		}
+		if _, ok := catMap[cat]; !ok {
+			catOrder = append(catOrder, cat)
+		}
+		catMap[cat] = append(catMap[cat], p)
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tmpl, err := template.New("home.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "home.html"))
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	tmpl.Execute(w, map[string]any{"Products": products})
+	tmpl.Execute(w, map[string]any{
+		"Products":   products,
+		"Categories": catOrder,
+		"ByCategory": catMap,
+	})
 }
 
 func (s *Server) handleAdmin(w http.ResponseWriter, r *http.Request) {
@@ -108,6 +148,7 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 			ImageUrl:      r.FormValue("image_url"),
 			Description:   r.FormValue("description"),
 			Rating:        r.FormValue("rating"),
+			Category:      r.FormValue("category"),
 		}
 		if params.Title == "" {
 			jsonError(w, "Title is required", 400)
@@ -140,6 +181,7 @@ func (s *Server) handleAddProduct(w http.ResponseWriter, r *http.Request) {
 			ImageUrl:      info.ImageURL,
 			Description:   info.Description,
 			Rating:        info.Rating,
+			Category:      autoCategory(info.Title),
 		}
 	}
 

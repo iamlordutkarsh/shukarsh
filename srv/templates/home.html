@@ -6,138 +6,251 @@
 <title>Shukarsh Enterprises ✿</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
-:root{--p:#e8729a;--pl:#f9a8c9;--pd:#c94d7a;--pp:#fde8f0;--lav:#d4a5e5;--bg:#fff5f8;--bg2:#fff0f4;--tx:#4a2035;--txl:#8a5670;--w:#fff;--r:20px}
+:root{--p:#e8729a;--pl:#f9a8c9;--pd:#c94d7a;--pp:#fde8f0;--lav:#d4a5e5;--pch:#f7c5a8;--bg:#fff5f8;--bg2:#fff0f4;--tx:#4a2035;--txl:#8a5670;--w:#fff;--r:20px}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 ::selection{background:var(--pl)}
 
+/* CANVAS */
+canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+
 /* NAV */
-nav{position:sticky;top:0;z-index:100;background:rgba(255,245,248,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(232,114,154,.08)}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,245,248,.92);backdrop-filter:blur(20px);padding:16px 24px;border-bottom:2px solid rgba(232,114,154,.08);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 30px rgba(232,114,154,.12)}
 .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-.logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p)}
+.logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p);transition:transform .3s}
+.logo:hover{transform:scale(1.05)}
 .logo span{color:var(--lav)}
-.nav-links{display:flex;gap:20px;align-items:center}
-.nav-link{font-size:.85rem;font-weight:700;color:var(--txl);letter-spacing:1px;transition:color .3s}
-.nav-link:hover{color:var(--p)}
-.admin-btn{padding:8px 20px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50px;font-size:.8rem;font-weight:700;letter-spacing:1px;transition:all .3s}
-.admin-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(232,114,154,.3)}
+.nav-links a{font-size:.85rem;font-weight:700;color:var(--txl);letter-spacing:1px;transition:color .3s}
+.nav-links a:hover{color:var(--p)}
 
 /* HERO */
-.hero{text-align:center;padding:80px 24px 50px;background:linear-gradient(160deg,#fff5f8,#fce4ec,#f8bbd0,#f48fb1);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.4),transparent 60%)}
+.hero{text-align:center;padding:90px 24px 60px;background:linear-gradient(160deg,#fff5f8,#fce4ec,#f8bbd0,#f48fb1);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.4),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(212,165,229,.25),transparent 50%)}
+.hero-shapes{position:absolute;inset:0;overflow:hidden}
+.hero-shapes span{position:absolute;opacity:.2;animation:drift 6s ease-in-out infinite}
+.hs1{top:10%;left:8%;font-size:2rem;animation-delay:0s}.hs2{top:20%;right:12%;font-size:1.5rem;animation-delay:1s}
+.hs3{bottom:15%;left:15%;font-size:1.8rem;animation-delay:2s}.hs4{bottom:25%;right:8%;font-size:2.2rem;animation-delay:.5s}
+.hs5{top:50%;left:50%;font-size:1.3rem;animation-delay:1.5s}.hs6{top:35%;left:25%;font-size:1.6rem;animation-delay:2.5s}
+@keyframes drift{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-15px) rotate(10deg)}}
 .hero-content{position:relative;z-index:1}
-.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.5rem,7vw,5rem);line-height:1.1;margin-bottom:8px}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(2.5rem,7vw,5rem);line-height:1.1;margin-bottom:8px;opacity:0;animation:heroFade .8s .2s forwards}
 .hero h1 em{font-family:'Satisfy',cursive;color:var(--p);font-style:normal}
-.hero p{font-size:1.1rem;color:var(--txl);max-width:500px;margin:0 auto}
-.badge-row{display:flex;justify-content:center;gap:12px;margin-top:20px;flex-wrap:wrap}
-.badge{padding:8px 18px;background:var(--w);border-radius:50px;font-size:.8rem;font-weight:700;box-shadow:0 2px 10px rgba(232,114,154,.1)}
+.hero>div>.hero-sub{font-size:1.1rem;color:var(--txl);max-width:500px;margin:0 auto 20px;opacity:0;animation:heroFade .8s .4s forwards}
+.badge-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;opacity:0;animation:heroFade .8s .6s forwards}
+.badge{padding:8px 18px;background:var(--w);border-radius:50px;font-size:.78rem;font-weight:700;box-shadow:0 2px 12px rgba(232,114,154,.1);transition:all .3s;cursor:default}
+.badge:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(232,114,154,.2)}
+.hero-stats{display:flex;justify-content:center;gap:40px;margin-top:30px;opacity:0;animation:heroFade .8s .8s forwards}
+.hero-stat{text-align:center}
+.hero-stat strong{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--pd);display:block}
+.hero-stat small{font-size:.75rem;color:var(--txl);font-weight:600}
+@keyframes heroFade{to{opacity:1;transform:translateY(0)}}
+.hero h1,.hero>div>.hero-sub,.badge-row,.hero-stats{transform:translateY(20px)}
 
-/* PRODUCTS GRID */
-.products-section{max-width:1200px;margin:0 auto;padding:50px 24px}
-.products-section h2{font-family:'DM Serif Display',serif;font-size:2rem;text-align:center;margin-bottom:36px}
-.products-section h2 span{font-family:'Satisfy',cursive;color:var(--p)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+/* CATEGORY FILTER */
+.filter-bar{position:sticky;top:58px;z-index:90;background:rgba(255,245,248,.95);backdrop-filter:blur(15px);padding:16px 24px;border-bottom:1px solid rgba(232,114,154,.06);overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.filter-inner{max-width:1200px;margin:0 auto;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.filter-btn{padding:8px 20px;border-radius:50px;font-size:.8rem;font-weight:700;cursor:pointer;border:2px solid var(--pl);color:var(--p);background:var(--w);transition:all .3s;white-space:nowrap}
+.filter-btn.active{background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-color:var(--p);box-shadow:0 4px 15px rgba(232,114,154,.25)}
+.filter-btn:hover:not(.active){background:var(--pp)}
+.filter-count{font-size:.65rem;opacity:.7;margin-left:4px}
 
-/* PRODUCT CARD */
-.card{background:var(--w);border-radius:var(--r);overflow:hidden;border:2px solid transparent;transition:all .5s cubic-bezier(.22,1,.36,1);position:relative}
+/* PRODUCTS */
+.products-section{max-width:1200px;margin:0 auto;padding:40px 24px 60px;position:relative;z-index:1}
+.cat-section{margin-bottom:50px}
+.cat-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid rgba(232,114,154,.1)}
+.cat-icon{font-size:1.5rem}
+.cat-title{font-family:'DM Serif Display',serif;font-size:1.5rem}
+.cat-count{font-size:.75rem;color:var(--txl);background:var(--pp);padding:3px 10px;border-radius:20px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+
+/* CARD */
+.card{background:var(--w);border-radius:var(--r);overflow:hidden;border:2px solid transparent;transition:all .5s cubic-bezier(.22,1,.36,1);position:relative;opacity:0;transform:translateY(30px)}
+.card.show{opacity:1;transform:translateY(0)}
 .card:hover{border-color:var(--pl);transform:translateY(-8px);box-shadow:0 20px 50px rgba(232,114,154,.15)}
-.card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--pp);display:block}
+.card-img-wrap{position:relative;overflow:hidden}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--pp);display:block;transition:transform .5s}
+.card:hover .card-img{transform:scale(1.05)}
 .card-img-placeholder{width:100%;aspect-ratio:1;background:linear-gradient(135deg,var(--pp),var(--bg2));display:flex;align-items:center;justify-content:center;font-size:4rem}
-.card-body{padding:20px}
-.card-platform{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.65rem;font-weight:800;letter-spacing:1.5px;color:var(--w);margin-bottom:10px}
+.card-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(74,32,53,.6),transparent 50%);opacity:0;transition:opacity .4s}
+.card:hover .card-overlay{opacity:1}
+.card-body{padding:18px}
+.card-platform{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:1.5px;color:var(--w);margin-bottom:8px}
 .card-platform.meesho{background:linear-gradient(135deg,#e8729a,#c94d7a)}
 .card-platform.amazon{background:linear-gradient(135deg,#ff9900,#e88a00)}
 .card-platform.flipkart{background:linear-gradient(135deg,#2874f0,#1a5dc8)}
 .card-platform.other{background:linear-gradient(135deg,var(--lav),#b57edc)}
-.card-title{font-family:'DM Serif Display',serif;font-size:1.1rem;line-height:1.3;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.card-desc{font-size:.82rem;color:var(--txl);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:12px}
-.card-price{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--p)}
-.card-price .old{font-size:.85rem;color:#bbb;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif}
-.card-rating{font-size:.8rem;color:var(--txl);margin-top:6px}
-.card-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-top:1px solid rgba(232,114,154,.08)}
-.buy-btn{padding:10px 24px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50px;font-size:.8rem;font-weight:700;transition:all .3s}
+.card-title{font-family:'DM Serif Display',serif;font-size:1.05rem;line-height:1.3;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-desc{font-size:.78rem;color:var(--txl);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px}
+.card-price{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--p)}
+.card-price .old{font-size:.8rem;color:#ccc;text-decoration:line-through;margin-left:6px;font-family:'Nunito',sans-serif}
+.card-rating{font-size:.75rem;color:var(--txl);margin-top:4px}
+.card-footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-top:1px solid rgba(232,114,154,.06)}
+.card-brand{font-size:.7rem;color:var(--txl)}
+.buy-btn{padding:9px 22px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50px;font-size:.75rem;font-weight:700;transition:all .3s;position:relative;overflow:hidden}
+.buy-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--pd),#d81b60);opacity:0;transition:opacity .3s}
+.buy-btn:hover::before{opacity:1}
+.buy-btn span{position:relative;z-index:1}
 .buy-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(232,114,154,.3)}
 
-/* EMPTY STATE */
+/* EMPTY */
 .empty{text-align:center;padding:80px 24px}
 .empty-icon{font-size:4rem;margin-bottom:16px}
 .empty h3{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px}
-.empty p{color:var(--txl);max-width:400px;margin:0 auto}
+.empty p{color:var(--txl)}
 
 /* FOOTER */
-footer{text-align:center;padding:40px 24px;background:var(--bg2);border-top:2px solid rgba(232,114,154,.08)}
+footer{text-align:center;padding:40px 24px;background:linear-gradient(135deg,#fce4ec,var(--bg));border-top:2px solid rgba(232,114,154,.06);position:relative;z-index:1}
 .f-logo{font-family:'Satisfy',cursive;font-size:1.8rem;color:var(--p);margin-bottom:6px}
 .f-logo span{color:var(--lav)}
 footer p{font-size:.85rem;color:var(--txl)}
 
-/* ANIM */
-.card{opacity:0;transform:translateY(30px);animation:cardIn .6s forwards}
-@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+/* SCROLL TOP */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:linear-gradient(135deg,var(--p),var(--pd));color:var(--w);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(232,114,154,.3)}
+.scroll-top.show{opacity:1;transform:translateY(0)}
+.scroll-top:hover{transform:translateY(-3px) scale(1.1)}
+
+@media(max-width:600px){
+  .hero-stats{gap:24px}
+  .hero-stat strong{font-size:1.4rem}
+  .filter-inner{justify-content:flex-start}
+}
 </style>
 </head>
 <body>
 
-<nav>
+<canvas id="bg"></canvas>
+
+<nav id="nav">
   <div class="nav-inner">
     <a href="/" class="logo">Shukarsh<span>✿</span></a>
-    <div class="nav-links">
-      <a href="/" class="nav-link">Home</a>
-    </div>
+    <div class="nav-links"><a href="/">Home</a></div>
   </div>
 </nav>
 
 <div class="hero">
+  <div class="hero-shapes">
+    <span class="hs1">✿</span><span class="hs2">♡</span><span class="hs3">✦</span>
+    <span class="hs4">❀</span><span class="hs5">♡</span><span class="hs6">✿</span>
+  </div>
   <div class="hero-content">
     <h1>Shukarsh <em>Enterprises</em></h1>
-    <p>Premium products curated with love. Available on your favorite platforms 💕</p>
+    <p class="hero-sub">Premium products curated with love 💕 Available on your favorite platforms</p>
     <div class="badge-row">
       <div class="badge">🛒 Amazon</div>
       <div class="badge">🛍️ Meesho</div>
       <div class="badge">⚡ Flipkart</div>
       <div class="badge">🚀 Pan India Delivery</div>
     </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
+      <div class="hero-stat"><strong>3.9★</strong><small>Rating</small></div>
+      <div class="hero-stat"><strong>128+</strong><small>Reviews</small></div>
+      <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
+    </div>
+  </div>
+</div>
+
+{{if .Products}}
+<div class="filter-bar">
+  <div class="filter-inner">
+    <div class="filter-btn active" onclick="filterCat('all',this)">✨ All<span class="filter-count">({{len .Products}})</span></div>
+    {{range .Categories}}
+    <div class="filter-btn" onclick="filterCat('{{.}}',this)">{{.}}</div>
+    {{end}}
   </div>
 </div>
 
 <div class="products-section">
-  <h2>Our <span>Products</span> ✿</h2>
-  {{if .Products}}
-  <div class="grid">
-    {{range $i, $p := .Products}}
-    <div class="card" style="animation-delay:{{$i}}00ms">
-      {{if $p.ImageUrl}}
-        <img class="card-img" src="/img?url={{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🛍️</div>'">
-      {{else}}
-        <div class="card-img-placeholder">🛍️</div>
-      {{end}}
-      <div class="card-body">
-        <div class="card-platform {{$p.Platform | lower}}">{{$p.Platform}}</div>
-        <div class="card-title">{{$p.Title}}</div>
-        {{if $p.Description}}<div class="card-desc">{{$p.Description}}</div>{{end}}
-        {{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}
-        {{if $p.Rating}}<div class="card-rating">⭐ {{$p.Rating}} / 5</div>{{end}}
-      </div>
-      <div class="card-footer">
-        <span style="font-size:.75rem;color:var(--txl)">Shukarsh ✿</span>
-        <a href="{{$p.Url}}" target="_blank" class="buy-btn">Buy Now →</a>
-      </div>
+  {{range .Categories}}
+  <div class="cat-section" data-cat="{{.}}">
+    <div class="cat-header">
+      <span class="cat-icon">{{catEmoji .}}</span>
+      <span class="cat-title">{{.}}</span>
+      <span class="cat-count">{{catCount $.ByCategory .}} items</span>
     </div>
-    {{end}}
+    <div class="grid">
+      {{range index $.ByCategory .}}
+      <div class="card" data-category="{{.Category}}">
+        <div class="card-img-wrap">
+          {{if .ImageUrl}}
+          <img class="card-img" src="/img?url={{.ImageUrl}}" alt="{{.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🛍️</div>'">
+          {{else}}
+          <div class="card-img-placeholder">🛍️</div>
+          {{end}}
+          <div class="card-overlay"></div>
+        </div>
+        <div class="card-body">
+          <div class="card-platform {{.Platform | lower}}">{{.Platform}}</div>
+          <div class="card-title">{{.Title}}</div>
+          {{if .Description}}<div class="card-desc">{{.Description}}</div>{{end}}
+          {{if .Price}}<div class="card-price">{{.Price}}{{if .OriginalPrice}}<span class="old">{{.OriginalPrice}}</span>{{end}}</div>{{end}}
+          {{if .Rating}}<div class="card-rating">⭐ {{.Rating}} / 5</div>{{end}}
+        </div>
+        <div class="card-footer">
+          <span class="card-brand">Shukarsh ✿</span>
+          <a href="{{.Url}}" target="_blank" class="buy-btn"><span>Buy Now →</span></a>
+        </div>
+      </div>
+      {{end}}
+    </div>
   </div>
-  {{else}}
+  {{end}}
+</div>
+{{else}}
+<div class="products-section">
   <div class="empty">
     <div class="empty-icon">🌸</div>
     <h3>Products coming soon!</h3>
     <p>We're adding our curated collection. Stay tuned! 💕</p>
   </div>
-  {{end}}
 </div>
+{{end}}
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
 
 <footer>
   <div class="f-logo">Shukarsh<span>✿</span></div>
   <p>© 2025 Shukarsh Enterprises · Made with love 💕</p>
 </footer>
 
+<script>
+// Floating particles
+const c=document.getElementById('bg'),ctx=c.getContext('2d');
+let W,H;function resize(){W=c.width=innerWidth;H=c.height=innerHeight}resize();addEventListener('resize',resize);
+const pts=[];const sym=['♥','✿','✦','♡','·'];const cols=['#e8729a','#f9a8c9','#d4a5e5','#f7c5a8','#f48fb1'];
+for(let i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,s:sym[Math.random()*sym.length|0],c:cols[Math.random()*cols.length|0],sz:Math.random()*12+6,vx:(Math.random()-.5)*.2,vy:-Math.random()*.4-.05,o:Math.random()*.2+.03,r:Math.random()*360,rv:(Math.random()-.5)*.3});
+function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=p.rv;if(p.y<-20){p.y=H+20;p.x=Math.random()*W}if(p.x<-20)p.x=W+20;if(p.x>W+20)p.x=-20;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.globalAlpha=p.o;ctx.font=p.sz+'px sans-serif';ctx.fillStyle=p.c;ctx.fillText(p.s,0,0);ctx.restore()});requestAnimationFrame(draw)}draw();
+
+// Sparkle trail
+const sp=[];addEventListener('mousemove',e=>{for(let i=0;i<2;i++)sp.push({x:e.clientX+(Math.random()-.5)*8,y:e.clientY+(Math.random()-.5)*8,sz:Math.random()*4+2,life:1,c:cols[Math.random()*cols.length|0],vx:(Math.random()-.5)*1.5,vy:(Math.random()-.5)*1.5})});
+function drawSp(){for(let i=sp.length-1;i>=0;i--){const s=sp[i];s.x+=s.vx;s.y+=s.vy;s.life-=.03;s.sz*=.97;if(s.life<=0){sp.splice(i,1);continue}ctx.save();ctx.globalAlpha=s.life;ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(s.x,s.y,s.sz,0,Math.PI*2);ctx.fill();ctx.restore()}requestAnimationFrame(drawSp)}drawSp();
+
+// Nav scroll
+const nav=document.getElementById('nav'),st=document.getElementById('scrollTop');
+addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>50);st.classList.toggle('show',scrollY>400)});
+
+// Scroll reveal cards
+const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('show'),i*60);obs.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.card').forEach(c=>obs.observe(c));
+
+// Category filter
+function filterCat(cat,el){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(s=>{
+    if(cat==='all'){s.style.display=''}else{s.style.display=s.dataset.cat===cat?'':'none'}
+  });
+  // Re-animate visible cards
+  document.querySelectorAll('.card').forEach(c=>{c.classList.remove('show');obs.observe(c)});
+}
+
+// Card tilt
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;card.style.transform=`translateY(-8px) perspective(600px) rotateX(${-y*6}deg) rotateY(${x*6}deg)`});
+  card.addEventListener('mouseleave',()=>{card.style.transform=''});
+});
+</script>
 </body>
 </html>
