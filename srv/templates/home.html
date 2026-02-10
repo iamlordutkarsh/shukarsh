@@ -10,11 +10,27 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="/">
 <meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#a78bca">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✿</text></svg>">
+<meta name="theme-color" content="#a78bca" id="theme-color-meta">
+<link rel="icon" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px}
+:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px;--card-shadow:rgba(0,0,0,.04);--card-hover:rgba(169,139,202,.18)}
+[data-theme="dark"]{--bg:#1a1225;--bg2:#231832;--lav:#7c5cad;--lavd:#b490e0;--lavl:#2d2045;--lavp:#251a38;--text:#e8ddf5;--textl:#a89bc0;--white:#1e1430;--card-shadow:rgba(0,0,0,.3);--card-hover:rgba(180,144,224,.15)}
+[data-theme="dark"] .announce{background:#2d2045}
+[data-theme="dark"] .card-badge.meesho{background:rgba(124,92,173,.9)}
+[data-theme="dark"] .card{box-shadow:0 2px 12px var(--card-shadow);border:1px solid rgba(124,92,173,.1)}
+[data-theme="dark"] .card:hover{box-shadow:0 16px 40px var(--card-hover)}
+[data-theme="dark"] nav{background:rgba(26,18,37,.92)}
+[data-theme="dark"] .hero-banner{background:linear-gradient(135deg,var(--lavl),var(--lavp),var(--bg))}
+[data-theme="dark"] footer{background:var(--lavl)}
+[data-theme="dark"] .cat-circle{background:var(--lavl)}
+[data-theme="dark"] .view-all{background:var(--lavl);border-color:var(--lav)}
+[data-theme="dark"] .mobile-menu{background:var(--bg)}
+[data-theme="dark"] input,[data-theme="dark"] textarea{background:var(--bg2);color:var(--text);border-color:rgba(124,92,173,.2)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
@@ -151,6 +167,21 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .footer-bottom{max-width:1300px;margin:24px auto 0;padding-top:16px;border-top:1px solid rgba(169,139,202,.2);text-align:center;font-size:.78rem;color:var(--textl)}
 .footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:10px}
 
+/* DARK MODE TOGGLE */
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:var(--lavl);border:none;font-size:1.1rem;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.theme-toggle:hover{background:var(--lavd);transform:scale(1.1) rotate(20deg)}
+[data-theme="dark"] .theme-toggle{background:var(--lavl)}
+
+/* SPECIAL SECTIONS */
+.special-section{max-width:1300px;margin:0 auto;padding:40px 40px 10px}
+.special-section .section-header{margin-bottom:24px}
+.special-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:12px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;position:absolute;top:12px;right:12px;z-index:2;backdrop-filter:blur(4px)}
+.tag-new{background:rgba(72,199,142,.9);color:#fff}
+.tag-best{background:rgba(255,183,77,.9);color:#fff}
+.special-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+@media(max-width:900px){.special-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.special-section{padding:24px 16px 10px}.special-grid{gap:10px}}
+
 /* SCROLL TOP */
 .scroll-top{position:fixed;bottom:24px;right:24px;width:48px;height:48px;background:var(--lavd);color:var(--white);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;opacity:0;transform:translateY(20px);transition:all .3s;z-index:99;box-shadow:0 4px 15px rgba(169,139,202,.3)}
 .scroll-top.show{opacity:1;transform:translateY(0)}
@@ -176,6 +207,7 @@ footer{background:var(--lavl);padding:50px 40px 24px}
       {{range .Categories}}<li><a href="#" onclick="event.preventDefault();navToCat('{{.}}')">{{.}}</a></li>{{end}}
     </ul>
     <a href="/search" class="search-toggle" title="Search">🔍</a>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
     <div class="hamburger" id="ham"><span></span><span></span><span></span></div>
   </div>
 </nav>
@@ -215,6 +247,58 @@ footer{background:var(--lavl);padding:50px 40px 24px}
     <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
   </div>
 </div>
+
+<!-- NEW ARRIVALS -->
+{{if .NewArrivals}}
+<div class="special-section" id="new-arrivals">
+  <div class="section-header reveal">
+    <h2 class="section-title">✨ New Arrivals</h2>
+    <span class="view-all" onclick="document.getElementById('new-arrivals').scrollIntoView({behavior:'smooth'})">Fresh drops →</span>
+  </div>
+  <div class="special-grid">
+    {{range $i, $p := .NewArrivals}}
+    <a href="/product/{{$p.ID}}" class="card reveal" style="--i:{{$i}}">
+      <div class="card-img-wrap">
+        {{if $p.ImageUrl}}<img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">{{else}}<div class="card-ph">🛍️</div>{{end}}
+        <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
+        <div class="special-tag tag-new">✨ NEW</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{$p.Title}}</div>
+        <div>{{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
+      </div>
+    </a>
+    {{end}}
+  </div>
+</div>
+<div class="divider"></div>
+{{end}}
+
+<!-- BEST SELLERS -->
+{{if .BestSellers}}
+<div class="special-section" id="best-sellers">
+  <div class="section-header reveal">
+    <h2 class="section-title">🔥 Best Sellers</h2>
+    <span class="view-all" onclick="document.getElementById('best-sellers').scrollIntoView({behavior:'smooth'})">Top picks →</span>
+  </div>
+  <div class="special-grid">
+    {{range $i, $p := .BestSellers}}
+    <a href="/product/{{$p.ID}}" class="card reveal" style="--i:{{$i}}">
+      <div class="card-img-wrap">
+        {{if $p.ImageUrl}}<img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">{{else}}<div class="card-ph">🛍️</div>{{end}}
+        <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
+        <div class="special-tag tag-best">🔥 BEST</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{$p.Title}}</div>
+        <div>{{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
+      </div>
+    </a>
+    {{end}}
+  </div>
+</div>
+<div class="divider"></div>
+{{end}}
 
 <!-- PRODUCT SECTIONS BY CATEGORY -->
 {{range .Categories}}
@@ -335,6 +419,23 @@ function scrollToCat(cat){
   const el=document.querySelector('.cat-sec[data-cat="'+cat+'"]');
   if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
 }
+// Dark mode
+function toggleDark(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'':'dark');
+  localStorage.setItem('theme',isDark?'light':'dark');
+  document.getElementById('themeToggle').textContent=isDark?'\u{1F319}':'\u2600\uFE0F';
+  document.getElementById('theme-color-meta').content=isDark?'#a78bca':'#1a1225';
+}
+(function(){
+  const saved=localStorage.getItem('theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeToggle').textContent='\u2600\uFE0F';}
+})();
+
+// PWA
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js').catch(()=>{});}
+
 function navToCat(cat){
   // Show only that category
   document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));

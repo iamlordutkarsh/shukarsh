@@ -106,6 +106,14 @@ textarea{resize:vertical;min-height:60px}
 .modal h2{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:16px}
 .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--pp);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem}
 
+/* TAG TOGGLES */
+.tag-toggle{cursor:pointer;display:inline-flex}
+.tag-toggle input{display:none}
+.tag-pill{padding:8px 16px;border-radius:20px;font-size:.78rem;font-weight:700;border:2px solid var(--pl);color:var(--txl);transition:all .3s;user-select:none}
+.tag-toggle input:checked+.tag-new-pill{background:#e8f5e9;border-color:#48c78e;color:#2e7d32}
+.tag-toggle input:checked+.tag-best-pill{background:#fff3e0;border-color:#ffb74d;color:#e65100}
+.tag-pill:hover{transform:scale(1.05)}
+
 /* UPLOAD */
 .upload-area{position:relative}
 .upload-zone{border:2px dashed var(--pl);border-radius:14px;padding:20px;text-align:center;transition:all .3s;background:var(--pp)}
@@ -263,6 +271,16 @@ textarea{resize:vertical;min-height:60px}
                   <option value="Other" {{if eq .Platform "Other"}}selected{{end}}>Other</option>
                 </select></div>
             </div>
+            <div style="display:flex;gap:16px;margin:10px 0">
+              <label class="tag-toggle" title="Show in New Arrivals">
+                <input type="checkbox" id="ed-new-{{.ID}}" {{if .IsNew}}checked{{end}}>
+                <span class="tag-pill tag-new-pill">✨ New Arrival</span>
+              </label>
+              <label class="tag-toggle" title="Show in Best Sellers">
+                <input type="checkbox" id="ed-best-{{.ID}}" {{if .IsBestseller}}checked{{end}}>
+                <span class="tag-pill tag-best-pill">🔥 Best Seller</span>
+              </label>
+            </div>
             <div class="field-group"><label class="field-label">Product URL</label>
               <input type="url" id="ed-url-{{.ID}}" value="{{.Url}}"></div>
             <div class="field-group"><label class="field-label">Description (shows on product page)</label>
@@ -404,6 +422,8 @@ async function saveProduct(id) {
   fd.append('long_description', document.getElementById('ed-desc-' + id).value);
   fd.append('image_url', data.defaultUrl || '');
   fd.append('images', JSON.stringify(data.images));
+  fd.append('is_new', document.getElementById('ed-new-' + id).checked ? '1' : '0');
+  fd.append('is_bestseller', document.getElementById('ed-best-' + id).checked ? '1' : '0');
   
   try {
     const res = await fetch('/api/update/' + id, { method: 'POST', body: fd });

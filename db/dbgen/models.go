@@ -28,6 +28,8 @@ type Product struct {
 	Category        string    `json:"category"`
 	Images          string    `json:"images"`
 	LongDescription string    `json:"long_description"`
+	IsNew           int64     `json:"is_new"`
+	IsBestseller    int64     `json:"is_bestseller"`
 }
 
 type Visitor struct {

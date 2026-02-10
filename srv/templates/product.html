@@ -16,9 +16,17 @@
 <meta property="product:price:currency" content="INR">
 <meta name="twitter:card" content="summary_large_image">
 
+<link rel="icon" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#a78bca" id="theme-color-meta">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px;--pink:#e8729a;--pinkl:#fde8f0}
+[data-theme="dark"]{--bg:#1a1225;--bg2:#231832;--lav:#7c5cad;--lavd:#b490e0;--lavl:#2d2045;--lavp:#251a38;--text:#e8ddf5;--textl:#a89bc0;--white:#1e1430;--pink:#d46b8f;--pinkl:#2d1a25}
+[data-theme="dark"] nav{background:rgba(26,18,37,.92)}
+[data-theme="dark"] footer{background:var(--lavl)}
+[data-theme="dark"] .rcard{border:1px solid rgba(124,92,173,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh}
@@ -122,6 +130,19 @@ footer{background:var(--lavl);padding:40px 40px 20px}
 .footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:8px}
 footer p{font-size:.82rem;color:var(--textl)}
 
+/* IMAGE ZOOM MODAL */
+.zoom-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;cursor:zoom-out;padding:20px}
+.zoom-overlay.open{display:flex}
+.zoom-img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:12px;transition:transform .3s;touch-action:manipulation;cursor:grab}
+.zoom-img.grabbing{cursor:grabbing}
+.zoom-close{position:fixed;top:20px;right:20px;width:44px;height:44px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#fff;cursor:pointer;z-index:201;border:none;transition:all .3s}
+.zoom-close:hover{background:rgba(255,255,255,.3);transform:scale(1.1)}
+.zoom-hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:.8rem;font-weight:600;z-index:201}
+
+/* DARK TOGGLE */
+.theme-toggle{width:40px;height:40px;border-radius:50%;background:var(--lavl);border:none;font-size:1.1rem;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center}
+.theme-toggle:hover{background:var(--lavd);transform:scale(1.1) rotate(20deg)}
+
 /* ANIMATIONS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
@@ -173,6 +194,7 @@ footer p{font-size:.82rem;color:var(--textl)}
     <a href="/" class="logo">Shukarsh ✿</a>
     <div class="nav-right">
       <a href="/search" class="search-icon" title="Search">🔍</a>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleDark()" title="Toggle dark mode">🌙</button>
       <a href="/" class="nav-btn">← Back to Shop</a>
     </div>
   </div>
@@ -306,7 +328,111 @@ footer p{font-size:.82rem;color:var(--textl)}
   </div>
 </footer>
 
+<!-- ZOOM MODAL -->
+<div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+  <button class="zoom-close" onclick="closeZoom()">✕</button>
+  <img class="zoom-img" id="zoomImg" onclick="event.stopPropagation()" alt="Zoom">
+  <div class="zoom-hint">Pinch to zoom · Drag to pan · Tap outside to close</div>
+</div>
+
 <script>
+// Dark mode
+function toggleDark(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'':'dark');
+  localStorage.setItem('theme',isDark?'light':'dark');
+  document.getElementById('themeToggle').textContent=isDark?'\u{1F319}':'\u2600\uFE0F';
+}
+(function(){
+  const saved=localStorage.getItem('theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeToggle').textContent='\u2600\uFE0F';}
+})();
+
+// PWA
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js').catch(()=>{});}
+
+// Image Zoom with pinch-to-zoom & drag
+let zoomScale=1,zoomX=0,zoomY=0,isDragging=false,dragStartX=0,dragStartY=0,lastTouchDist=0;
+const zoomOverlay=document.getElementById('zoomOverlay');
+const zoomImg=document.getElementById('zoomImg');
+
+function openZoom(src){
+  zoomImg.src=src;
+  zoomScale=1;zoomX=0;zoomY=0;
+  updateZoomTransform();
+  zoomOverlay.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeZoom(){
+  zoomOverlay.classList.remove('open');
+  document.body.style.overflow='';
+}
+function updateZoomTransform(){
+  zoomImg.style.transform=`translate(${zoomX}px,${zoomY}px) scale(${zoomScale})`;
+}
+
+// Mouse wheel zoom
+zoomImg.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta=e.deltaY>0?0.9:1.1;
+  zoomScale=Math.max(.5,Math.min(5,zoomScale*delta));
+  updateZoomTransform();
+},{passive:false});
+
+// Mouse drag
+zoomImg.addEventListener('mousedown',e=>{
+  if(zoomScale<=1)return;
+  isDragging=true;dragStartX=e.clientX-zoomX;dragStartY=e.clientY-zoomY;
+  zoomImg.classList.add('grabbing');
+});
+window.addEventListener('mousemove',e=>{
+  if(!isDragging)return;
+  zoomX=e.clientX-dragStartX;zoomY=e.clientY-dragStartY;
+  updateZoomTransform();
+});
+window.addEventListener('mouseup',()=>{isDragging=false;zoomImg.classList.remove('grabbing');});
+
+// Touch pinch-to-zoom
+zoomImg.addEventListener('touchstart',e=>{
+  if(e.touches.length===2){
+    lastTouchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+  }else if(e.touches.length===1&&zoomScale>1){
+    isDragging=true;dragStartX=e.touches[0].clientX-zoomX;dragStartY=e.touches[0].clientY-zoomY;
+  }
+},{passive:true});
+zoomImg.addEventListener('touchmove',e=>{
+  if(e.touches.length===2){
+    e.preventDefault();
+    const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    const delta=dist/lastTouchDist;
+    zoomScale=Math.max(.5,Math.min(5,zoomScale*delta));
+    lastTouchDist=dist;
+    updateZoomTransform();
+  }else if(isDragging&&e.touches.length===1){
+    zoomX=e.touches[0].clientX-dragStartX;zoomY=e.touches[0].clientY-dragStartY;
+    updateZoomTransform();
+  }
+},{passive:false});
+zoomImg.addEventListener('touchend',()=>{isDragging=false;lastTouchDist=0;});
+
+// Double tap to zoom
+let lastTap=0;
+zoomImg.addEventListener('touchend',e=>{
+  const now=Date.now();
+  if(now-lastTap<300){zoomScale=zoomScale>1?1:2.5;zoomX=0;zoomY=0;updateZoomTransform();}
+  lastTap=now;
+});
+
+// Escape key
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeZoom();});
+
+// Make gallery image clickable
+document.querySelector('.gallery-main')?.addEventListener('click',()=>{
+  const img=document.getElementById('mainImage');
+  if(img)openZoom(img.src);
+});
+
 // Nav scroll shadow
 const nav=document.getElementById('nav');
 window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>50));

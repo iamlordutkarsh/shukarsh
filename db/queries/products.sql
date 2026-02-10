@@ -39,5 +39,16 @@ UPDATE products SET
   images = ?,
   long_description = ?,
   url = ?,
-  platform = ?
+  platform = ?,
+  is_new = ?,
+  is_bestseller = ?
 WHERE id = ?;
+
+-- name: ListNewArrivals :many
+SELECT * FROM products WHERE is_new = 1 ORDER BY added_at DESC;
+
+-- name: ListBestSellers :many
+SELECT * FROM products WHERE is_bestseller = 1 ORDER BY added_at DESC;
+
+-- name: UpdateProductTags :exec
+UPDATE products SET is_new = ?, is_bestseller = ? WHERE id = ?;

@@ -19,7 +19,7 @@ func (q *Queries) DeleteProduct(ctx context.Context, id int64) error {
 }
 
 const getProduct = `-- name: GetProduct :one
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE id = ?
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products WHERE id = ?
 `
 
 func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
@@ -39,6 +39,8 @@ func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
 		&i.Category,
 		&i.Images,
 		&i.LongDescription,
+		&i.IsNew,
+		&i.IsBestseller,
 	)
 	return i, err
 }
@@ -46,7 +48,7 @@ func (q *Queries) GetProduct(ctx context.Context, id int64) (Product, error) {
 const insertProduct = `-- name: InsertProduct :one
 INSERT INTO products (url, platform, title, price, original_price, image_url, description, rating, category, images, long_description)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-RETURNING id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description
+RETURNING id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller
 `
 
 type InsertProductParams struct {
@@ -92,8 +94,53 @@ func (q *Queries) InsertProduct(ctx context.Context, arg InsertProductParams) (P
 		&i.Category,
 		&i.Images,
 		&i.LongDescription,
+		&i.IsNew,
+		&i.IsBestseller,
 	)
 	return i, err
+}
+
+const listBestSellers = `-- name: ListBestSellers :many
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products WHERE is_bestseller = 1 ORDER BY added_at DESC
+`
+
+func (q *Queries) ListBestSellers(ctx context.Context) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, listBestSellers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Product{}
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.Platform,
+			&i.Title,
+			&i.Price,
+			&i.OriginalPrice,
+			&i.ImageUrl,
+			&i.Description,
+			&i.Rating,
+			&i.AddedAt,
+			&i.Category,
+			&i.Images,
+			&i.LongDescription,
+			&i.IsNew,
+			&i.IsBestseller,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listCategories = `-- name: ListCategories :many
@@ -123,8 +170,51 @@ func (q *Queries) ListCategories(ctx context.Context) ([]string, error) {
 	return items, nil
 }
 
+const listNewArrivals = `-- name: ListNewArrivals :many
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products WHERE is_new = 1 ORDER BY added_at DESC
+`
+
+func (q *Queries) ListNewArrivals(ctx context.Context) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, listNewArrivals)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Product{}
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.Platform,
+			&i.Title,
+			&i.Price,
+			&i.OriginalPrice,
+			&i.ImageUrl,
+			&i.Description,
+			&i.Rating,
+			&i.AddedAt,
+			&i.Category,
+			&i.Images,
+			&i.LongDescription,
+			&i.IsNew,
+			&i.IsBestseller,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listProducts = `-- name: ListProducts :many
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products ORDER BY added_at DESC
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products ORDER BY added_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -150,6 +240,8 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 			&i.Category,
 			&i.Images,
 			&i.LongDescription,
+			&i.IsNew,
+			&i.IsBestseller,
 		); err != nil {
 			return nil, err
 		}
@@ -165,7 +257,7 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 }
 
 const listProductsByCategory = `-- name: ListProductsByCategory :many
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE category = ? ORDER BY added_at DESC
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products WHERE category = ? ORDER BY added_at DESC
 `
 
 func (q *Queries) ListProductsByCategory(ctx context.Context, category string) ([]Product, error) {
@@ -191,6 +283,8 @@ func (q *Queries) ListProductsByCategory(ctx context.Context, category string) (
 			&i.Category,
 			&i.Images,
 			&i.LongDescription,
+			&i.IsNew,
+			&i.IsBestseller,
 		); err != nil {
 			return nil, err
 		}
@@ -206,7 +300,7 @@ func (q *Queries) ListProductsByCategory(ctx context.Context, category string) (
 }
 
 const searchProducts = `-- name: SearchProducts :many
-SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description FROM products WHERE title LIKE ? OR description LIKE ? OR category LIKE ? ORDER BY added_at DESC
+SELECT id, url, platform, title, price, original_price, image_url, description, rating, added_at, category, images, long_description, is_new, is_bestseller FROM products WHERE title LIKE ? OR description LIKE ? OR category LIKE ? ORDER BY added_at DESC
 `
 
 type SearchProductsParams struct {
@@ -238,6 +332,8 @@ func (q *Queries) SearchProducts(ctx context.Context, arg SearchProductsParams) 
 			&i.Category,
 			&i.Images,
 			&i.LongDescription,
+			&i.IsNew,
+			&i.IsBestseller,
 		); err != nil {
 			return nil, err
 		}
@@ -278,7 +374,9 @@ UPDATE products SET
   images = ?,
   long_description = ?,
   url = ?,
-  platform = ?
+  platform = ?,
+  is_new = ?,
+  is_bestseller = ?
 WHERE id = ?
 `
 
@@ -294,6 +392,8 @@ type UpdateProductParams struct {
 	LongDescription string `json:"long_description"`
 	Url             string `json:"url"`
 	Platform        string `json:"platform"`
+	IsNew           int64  `json:"is_new"`
+	IsBestseller    int64  `json:"is_bestseller"`
 	ID              int64  `json:"id"`
 }
 
@@ -310,6 +410,8 @@ func (q *Queries) UpdateProduct(ctx context.Context, arg UpdateProductParams) er
 		arg.LongDescription,
 		arg.Url,
 		arg.Platform,
+		arg.IsNew,
+		arg.IsBestseller,
 		arg.ID,
 	)
 	return err
@@ -327,5 +429,20 @@ type UpdateProductImagesParams struct {
 
 func (q *Queries) UpdateProductImages(ctx context.Context, arg UpdateProductImagesParams) error {
 	_, err := q.db.ExecContext(ctx, updateProductImages, arg.Images, arg.LongDescription, arg.ID)
+	return err
+}
+
+const updateProductTags = `-- name: UpdateProductTags :exec
+UPDATE products SET is_new = ?, is_bestseller = ? WHERE id = ?
+`
+
+type UpdateProductTagsParams struct {
+	IsNew        int64 `json:"is_new"`
+	IsBestseller int64 `json:"is_bestseller"`
+	ID           int64 `json:"id"`
+}
+
+func (q *Queries) UpdateProductTags(ctx context.Context, arg UpdateProductTagsParams) error {
+	_, err := q.db.ExecContext(ctx, updateProductTags, arg.IsNew, arg.IsBestseller, arg.ID)
 	return err
 }

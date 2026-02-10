@@ -164,6 +164,9 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		}
 		catMap[cat] = append(catMap[cat], p)
 	}
+	newArrivals, _ := q.ListNewArrivals(r.Context())
+	bestSellers, _ := q.ListBestSellers(r.Context())
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	tmpl, err := template.New("home.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "home.html"))
 	if err != nil {
@@ -171,9 +174,11 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl.Execute(w, map[string]any{
-		"Products":   products,
-		"Categories": catOrder,
-		"ByCategory": catMap,
+		"Products":    products,
+		"Categories":  catOrder,
+		"ByCategory":  catMap,
+		"NewArrivals": newArrivals,
+		"BestSellers": bestSellers,
 	})
 }
 
@@ -389,6 +394,15 @@ func (s *Server) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 		platform = p.Platform
 	}
 
+	isNew := p.IsNew
+	if v := r.FormValue("is_new"); v != "" {
+		isNew, _ = strconv.ParseInt(v, 10, 64)
+	}
+	isBestseller := p.IsBestseller
+	if v := r.FormValue("is_bestseller"); v != "" {
+		isBestseller, _ = strconv.ParseInt(v, 10, 64)
+	}
+
 	err = q.UpdateProduct(r.Context(), dbgen.UpdateProductParams{
 		Title:           title,
 		Price:           price,
@@ -401,6 +415,8 @@ func (s *Server) handleUpdateProduct(w http.ResponseWriter, r *http.Request) {
 		LongDescription: longDesc,
 		Url:             url,
 		Platform:        platform,
+		IsNew:           isNew,
+		IsBestseller:    isBestseller,
 		ID:              id,
 	})
 	if err != nil {
