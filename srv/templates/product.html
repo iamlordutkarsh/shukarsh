@@ -295,6 +295,7 @@ footer p{font-size:.82rem;color:var(--textl)}
       <a class="share-btn" href="https://wa.me/?text={{.Product.Title}}%20-%20{{.Product.Url}}" target="_blank" title="WhatsApp">💬</a>
       <a class="share-btn" href="https://twitter.com/intent/tweet?text={{.Product.Title}}&url={{.Product.Url}}" target="_blank" title="Twitter">𝕏</a>
       <span class="share-btn" onclick="copyLink()" title="Copy Link">📋</span>
+      <span class="share-btn" onclick="showProductQR()" title="QR Code">📱</span>
     </div>
   </div>
 </div>
@@ -486,6 +487,31 @@ function copyLink() {
     if(btn) { const orig = btn.innerHTML; btn.innerHTML = '✅ Copied!'; setTimeout(()=>btn.innerHTML=orig, 2000); }
   });
 }
+// QR Code
+function showProductQR() {
+  const url = window.location.href;
+  const qrSrc = '/api/qr?url=' + encodeURIComponent(url) + '&size=300';
+  const overlay = document.getElementById('qrOverlay');
+  document.getElementById('qrImg').src = qrSrc;
+  document.getElementById('qrLink').textContent = url;
+  document.getElementById('qrDl').href = qrSrc;
+  overlay.style.display = 'flex';
+}
+function closeProductQR() { document.getElementById('qrOverlay').style.display = 'none'; }
 </script>
+
+<!-- QR Modal -->
+<div id="qrOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:400;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)closeProductQR()">
+  <div style="background:var(--white,#fff);border-radius:20px;padding:32px;text-align:center;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative">
+    <button onclick="closeProductQR()" style="position:absolute;top:12px;right:12px;width:32px;height:32px;background:var(--lavl,#e0d4f0);border:none;border-radius:50%;font-size:1rem;cursor:pointer">✕</button>
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:12px">📱 Scan to view</h3>
+    <img id="qrImg" width="260" height="260" style="border-radius:12px;border:3px solid var(--lavl,#e0d4f0);margin-bottom:12px" alt="QR">
+    <p id="qrLink" style="font-size:.75rem;color:#888;word-break:break-all;margin-bottom:16px"></p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <a id="qrDl" download="product-qr.png" style="padding:8px 16px;background:linear-gradient(135deg,var(--lav,#a78bca),var(--lavd,#8b6aae));color:#fff;border-radius:10px;font-size:.82rem;font-weight:700;text-decoration:none">💾 Download</a>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('qrLink').textContent);this.textContent='✅ Copied!';setTimeout(()=>this.textContent='📋 Copy URL',1500)" style="padding:8px 16px;background:var(--lavl,#e0d4f0);color:var(--lav,#a78bca);border:none;border-radius:10px;font-size:.82rem;font-weight:700;cursor:pointer">📋 Copy URL</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

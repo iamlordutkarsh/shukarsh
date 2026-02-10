@@ -130,6 +130,26 @@ textarea{resize:vertical;min-height:60px}
 .upload-progress{margin-top:8px;font-size:.78rem;color:var(--p);font-weight:700;display:none}
 .upload-progress.show{display:block}
 
+/* PROGRESS BAR */
+.progress-bar-outer{height:12px;background:var(--pp);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.progress-bar-inner{height:100%;background:linear-gradient(135deg,var(--p),var(--pd));border-radius:8px;width:0%;transition:width .5s ease}
+.progress-stats{font-size:.85rem;font-weight:700;color:var(--tx);margin-bottom:4px}
+.progress-stats span{margin-right:16px}
+.progress-stats .imported{color:var(--green)}
+.progress-stats .skipped{color:#ff9800}
+.progress-stats .failed{color:var(--red)}
+.progress-message{font-size:.8rem;color:var(--txl)}
+
+/* QR MODAL */
+.qr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+.qr-overlay.open{display:flex}
+.qr-modal{background:var(--w);border-radius:20px;padding:32px;text-align:center;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.qr-modal h3{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:8px}
+.qr-modal p{font-size:.82rem;color:var(--txl);margin-bottom:16px;word-break:break-all}
+.qr-modal img{margin:0 auto 16px;border-radius:12px;border:3px solid var(--pp)}
+.qr-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.qr-close{position:absolute;top:-12px;right:-12px;width:36px;height:36px;background:var(--p);color:var(--w);border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
 @media(max-width:600px){.form-row{flex-direction:column}.edit-grid{grid-template-columns:1fr}.prod-actions{flex-direction:column}.img-slot{width:72px;height:72px}}
 </style>
 </head>
@@ -147,6 +167,7 @@ textarea{resize:vertical;min-height:60px}
   <div class="tabs">
     <div class="tab active" onclick="switchTab('url')">🔗 From URL</div>
     <div class="tab" onclick="switchTab('manual')">✏️ Manual Entry</div>
+    <div class="tab" onclick="switchTab('bulk')">📦 Bulk Import</div>
   </div>
 
   <div class="add-box">
@@ -206,6 +227,32 @@ textarea{resize:vertical;min-height:60px}
       </form>
       <div class="msg" id="manualMsg"></div>
     </div>
+
+    <div class="panel" id="panel-bulk">
+      <h2>📦 Bulk Import from Meesho</h2>
+      <p class="hint">🚀 Import all products from your Meesho store in one click. Duplicates are automatically skipped.</p>
+      <div style="margin-top:16px">
+        <div class="form-row">
+          <input type="url" id="storeUrl" value="https://www.meesho.com/ShuKarshEnterprises" placeholder="Meesho store URL">
+          <button class="btn" id="bulkBtn" onclick="startBulkImport()">🚀 Import All</button>
+        </div>
+        <div id="bulkProgress" style="display:none;margin-top:16px">
+          <div class="progress-bar-outer">
+            <div class="progress-bar-inner" id="bulkProgressBar"></div>
+          </div>
+          <div class="progress-stats" id="bulkStats"></div>
+          <div class="progress-message" id="bulkMessage"></div>
+        </div>
+        <div class="msg" id="bulkMsg"></div>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(167,139,202,.1)">
+          <h3 style="font-size:.95rem;font-weight:700;color:var(--txl);margin-bottom:8px">📋 Or paste JSON data</h3>
+          <p class="hint">If auto-import fails (Meesho blocks), you can paste product data as JSON here.</p>
+          <textarea id="jsonImport" rows="4" placeholder='[{"name":"Product","price":299,...}]' style="margin-top:8px"></textarea>
+          <button class="btn btn-sm" onclick="importJSON()" style="margin-top:8px">📥 Import JSON</button>
+          <div class="msg" id="jsonMsg"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="prod-list">
@@ -220,6 +267,7 @@ textarea{resize:vertical;min-height:60px}
             <div class="prod-meta"><b>{{.Platform}}</b> · {{if .Price}}{{.Price}}{{else}}No price{{end}} · {{if .Category}}{{.Category}}{{else}}Uncategorized{{end}}</div>
           </div>
           <div class="prod-actions">
+            <button class="btn btn-sm btn-outline" onclick="showQR({{.ID}}, '{{.Title}}')" title="QR Code">📱 QR</button>
             <button class="btn btn-sm btn-outline" onclick="toggleEdit({{.ID}})">✏️ Edit</button>
             <button class="btn btn-sm btn-danger" onclick="delProduct({{.ID}})">🗑</button>
           </div>
@@ -298,6 +346,21 @@ textarea{resize:vertical;min-height:60px}
     {{else}}
       <div class="empty-msg">No products yet. Add your first one! 🌸</div>
     {{end}}
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="qr-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()">
+  <div class="qr-modal" style="position:relative">
+    <button class="qr-close" onclick="closeQR()">✕</button>
+    <h3 id="qrTitle">QR Code</h3>
+    <p id="qrUrl"></p>
+    <img id="qrImage" width="256" height="256" alt="QR Code">
+    <div class="qr-actions">
+      <a id="qrDownload" class="btn btn-sm" download="qr-code.png">💾 Download PNG</a>
+      <button class="btn btn-sm btn-outline" onclick="copyQRUrl()">📋 Copy URL</button>
+      <button class="btn btn-sm btn-outline" onclick="printQR()">🖨️ Print</button>
+    </div>
   </div>
 </div>
 
@@ -567,6 +630,142 @@ async function handleEditFileUpload(input, id) {
     row.innerHTML = origHTML;
     alert('Upload failed: ' + err.message);
   }
+}
+
+// === BULK IMPORT ===
+async function startBulkImport() {
+  const btn = document.getElementById('bulkBtn');
+  const msg = document.getElementById('bulkMsg');
+  const progress = document.getElementById('bulkProgress');
+  const storeUrl = document.getElementById('storeUrl').value.trim();
+  
+  btn.disabled = true; btn.textContent = '⏳ Importing...';
+  msg.className = 'msg'; msg.style.display = 'none';
+  progress.style.display = 'block';
+  
+  try {
+    const fd = new FormData();
+    fd.append('store_url', storeUrl);
+    const res = await fetch('/api/bulk-import', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.error) { msg.className = 'msg err'; msg.textContent = '❌ ' + data.error; return; }
+    
+    // Poll for status
+    pollImportStatus();
+  } catch(err) {
+    msg.className = 'msg err'; msg.textContent = '❌ ' + err.message;
+    btn.disabled = false; btn.textContent = '🚀 Import All';
+  }
+}
+
+async function pollImportStatus() {
+  const bar = document.getElementById('bulkProgressBar');
+  const stats = document.getElementById('bulkStats');
+  const message = document.getElementById('bulkMessage');
+  const msg = document.getElementById('bulkMsg');
+  const btn = document.getElementById('bulkBtn');
+  
+  try {
+    const res = await fetch('/api/bulk-import/status');
+    const data = await res.json();
+    
+    const total = data.total || 1;
+    const done = (data.imported || 0) + (data.skipped || 0) + (data.failed || 0);
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    bar.style.width = pct + '%';
+    
+    stats.innerHTML = `<span class="imported">✅ ${data.imported || 0} imported</span>` +
+      `<span class="skipped">⏭ ${data.skipped || 0} skipped</span>` +
+      `<span class="failed">❌ ${data.failed || 0} failed</span>` +
+      `<span>of ${data.total || '?'} total</span>`;
+    message.textContent = data.message || '';
+    
+    if (data.running) {
+      setTimeout(pollImportStatus, 1000);
+    } else {
+      btn.disabled = false; btn.textContent = '🚀 Import All';
+      if (data.imported > 0) {
+        msg.className = 'msg ok';
+        msg.textContent = `🎉 Done! Imported ${data.imported} new products.`;
+        setTimeout(() => location.reload(), 2000);
+      } else if (data.errors && data.errors.length > 0) {
+        msg.className = 'msg err';
+        msg.textContent = '⚠️ ' + data.errors[0];
+      } else {
+        msg.className = 'msg ok';
+        msg.textContent = '✅ All products already imported!';
+      }
+    }
+  } catch(err) {
+    setTimeout(pollImportStatus, 2000);
+  }
+}
+
+async function importJSON() {
+  const msg = document.getElementById('jsonMsg');
+  const textarea = document.getElementById('jsonImport');
+  const jsonStr = textarea.value.trim();
+  if (!jsonStr) { msg.className = 'msg err'; msg.textContent = 'Paste JSON data first'; return; }
+  
+  msg.className = 'msg loading'; msg.textContent = 'Importing...';
+  try {
+    const res = await fetch('/api/bulk-import/json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: jsonStr
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    msg.className = 'msg ok';
+    msg.textContent = `🎉 Imported ${data.imported}, skipped ${data.skipped} (of ${data.total})`;
+    if (data.imported > 0) setTimeout(() => location.reload(), 2000);
+  } catch(err) {
+    msg.className = 'msg err'; msg.textContent = '❌ ' + err.message;
+  }
+}
+
+// === QR CODE ===
+function showQR(productId, title) {
+  const baseUrl = window.location.origin;
+  const productUrl = baseUrl + '/product/' + productId;
+  const qrApiUrl = '/api/qr?url=' + encodeURIComponent(productUrl) + '&size=256';
+  
+  document.getElementById('qrTitle').textContent = title || 'Product QR';
+  document.getElementById('qrUrl').textContent = productUrl;
+  document.getElementById('qrImage').src = qrApiUrl;
+  document.getElementById('qrDownload').href = qrApiUrl;
+  document.getElementById('qrDownload').download = 'qr-' + productId + '.png';
+  document.getElementById('qrOverlay').classList.add('open');
+}
+
+function closeQR() {
+  document.getElementById('qrOverlay').classList.remove('open');
+}
+
+function copyQRUrl() {
+  const url = document.getElementById('qrUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy URL', 1500);
+  });
+}
+
+function printQR() {
+  const img = document.getElementById('qrImage');
+  const title = document.getElementById('qrTitle').textContent;
+  const url = document.getElementById('qrUrl').textContent;
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>QR - ${title}</title>
+    <style>body{font-family:sans-serif;text-align:center;padding:40px}
+    h2{margin-bottom:8px}p{color:#666;font-size:14px;word-break:break-all}
+    img{margin:20px auto;display:block}
+    .brand{font-size:24px;color:#a78bca;margin-bottom:20px}</style></head>
+    <body><div class="brand">Shukarsh ✿</div>
+    <h2>${title}</h2><img src="${img.src}" width="300" height="300">
+    <p>${url}</p><p style="margin-top:20px;font-size:12px;color:#999">Scan to view product</p></body></html>`);
+  w.document.close();
+  setTimeout(() => { w.print(); }, 500);
 }
 
 // Initialize
