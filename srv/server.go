@@ -2,6 +2,7 @@ package srv
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
@@ -22,27 +23,61 @@ import (
 
 type Server struct {
 	DB           *sql.DB
-	Hostname     string
-	TemplatesDir string
-	StaticDir    string
-	UploadsDir   string
+	Hostname       string
+	TemplatesDir   string
+	StaticDir      string
+	UploadsDir     string
+	AdminPassword  string
+	adminTokenHash [32]byte
 }
 
-func New(dbPath, hostname string) (*Server, error) {
+func New(dbPath, hostname, adminPassword string) (*Server, error) {
 	_, thisFile, _, _ := runtime.Caller(0)
 	baseDir := filepath.Dir(thisFile)
 	uploadsDir := filepath.Join(filepath.Dir(baseDir), "uploads")
 	os.MkdirAll(uploadsDir, 0755)
 	srv := &Server{
-		Hostname:     hostname,
-		TemplatesDir: filepath.Join(baseDir, "templates"),
-		StaticDir:    filepath.Join(baseDir, "static"),
-		UploadsDir:   uploadsDir,
+		Hostname:      hostname,
+		TemplatesDir:  filepath.Join(baseDir, "templates"),
+		StaticDir:     filepath.Join(baseDir, "static"),
+		UploadsDir:    uploadsDir,
+		AdminPassword: adminPassword,
 	}
+	// Generate a stable session token from the password
+	srv.adminTokenHash = sha256.Sum256([]byte("shukarsh-admin-" + adminPassword))
 	if err := srv.setUpDatabase(dbPath); err != nil {
 		return nil, err
 	}
 	return srv, nil
+}
+
+func (s *Server) adminToken() string {
+	return hex.EncodeToString(s.adminTokenHash[:16])
+}
+
+func (s *Server) isAdminAuthed(r *http.Request) bool {
+	if s.AdminPassword == "" {
+		return true // no password set, open access
+	}
+	c, err := r.Cookie("admin_token")
+	if err != nil {
+		return false
+	}
+	return c.Value == s.adminToken()
+}
+
+func (s *Server) requireAdmin(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !s.isAdminAuthed(r) {
+			if r.Header.Get("Content-Type") == "application/json" || strings.HasPrefix(r.URL.Path, "/api/") {
+				http.Error(w, `{"error":"unauthorized"}`, http.StatusUnauthorized)
+				return
+			}
+			http.Redirect(w, r, "/admin/login", http.StatusFound)
+			return
+		}
+		next(w, r)
+	}
 }
 
 func (s *Server) setUpDatabase(dbPath string) error {
@@ -62,18 +97,21 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("GET /{$}", s.handleHome)
 	mux.HandleFunc("GET /product/{id}", s.handleProductDetail)
 	mux.HandleFunc("GET /search", s.handleSearch)
-	mux.HandleFunc("GET /admin", s.handleAdmin)
-	mux.HandleFunc("POST /api/add", s.handleAddProduct)
-	mux.HandleFunc("POST /api/update/{id}", s.handleUpdateProduct)
-	mux.HandleFunc("POST /api/delete/{id}", s.handleDeleteProduct)
+	mux.HandleFunc("GET /admin", s.requireAdmin(s.handleAdmin))
+	mux.HandleFunc("GET /admin/login", s.handleAdminLogin)
+	mux.HandleFunc("POST /admin/login", s.handleAdminLoginPost)
+	mux.HandleFunc("GET /admin/logout", s.handleAdminLogout)
+	mux.HandleFunc("POST /api/add", s.requireAdmin(s.handleAddProduct))
+	mux.HandleFunc("POST /api/update/{id}", s.requireAdmin(s.handleUpdateProduct))
+	mux.HandleFunc("POST /api/delete/{id}", s.requireAdmin(s.handleDeleteProduct))
 	mux.HandleFunc("GET /api/products", s.handleListProducts)
 	mux.HandleFunc("GET /api/product/{id}", s.handleGetProduct)
 	mux.HandleFunc("GET /img", handleImageProxy)
 	mux.HandleFunc("GET /api/qr", handleQRCode)
-	mux.HandleFunc("POST /api/upload", s.handleUploadImage)
-	mux.HandleFunc("POST /api/bulk-import", s.handleBulkImport)
+	mux.HandleFunc("POST /api/upload", s.requireAdmin(s.handleUploadImage))
+	mux.HandleFunc("POST /api/bulk-import", s.requireAdmin(s.handleBulkImport))
 	mux.HandleFunc("GET /api/bulk-import/status", s.handleBulkImportStatus)
-	mux.HandleFunc("POST /api/bulk-import/json", s.handleBulkImportJSON)
+	mux.HandleFunc("POST /api/bulk-import/json", s.requireAdmin(s.handleBulkImportJSON))
 	mux.HandleFunc("GET /sitemap.xml", s.handleSitemap)
 	mux.HandleFunc("GET /robots.txt", s.handleRobotsTxt)
 	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir(s.UploadsDir))))
@@ -294,6 +332,89 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		"Products": products,
 		"Count":    len(products),
 	})
+}
+
+func (s *Server) handleAdminLogin(w http.ResponseWriter, r *http.Request) {
+	if s.AdminPassword == "" || s.isAdminAuthed(r) {
+		http.Redirect(w, r, "/admin", http.StatusFound)
+		return
+	}
+	errMsg := r.URL.Query().Get("error")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprintf(w, `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Login — Shukarsh</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf0e4;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--text:#2c2137;--white:#fff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-card{background:var(--white);border-radius:24px;padding:48px 40px;width:100%%;max-width:400px;box-shadow:0 8px 40px rgba(169,139,202,.15);text-align:center}
+.login-card .logo{font-family:'Satisfy',cursive;font-size:2.4rem;color:var(--lavd);margin-bottom:4px}
+.login-card .sub{color:#6b5e7b;font-size:.9rem;margin-bottom:32px}
+.login-card .lock{font-size:3rem;margin-bottom:16px}
+.field{position:relative;margin-bottom:20px}
+.field input{width:100%%;padding:14px 18px;border:2px solid var(--lavl);border-radius:14px;font-size:1rem;font-family:'Nunito',sans-serif;outline:none;transition:border-color .3s}
+.field input:focus{border-color:var(--lavd)}
+.btn{width:100%%;padding:14px;background:var(--lavd);color:var(--white);border:none;border-radius:14px;font-size:1rem;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .3s;letter-spacing:.5px}
+.btn:hover{background:#9673bf;transform:translateY(-2px);box-shadow:0 6px 20px rgba(169,139,202,.3)}
+.error{background:#fce4ec;color:#c62828;padding:10px 16px;border-radius:10px;font-size:.85rem;margin-bottom:16px}
+.back{display:inline-block;margin-top:20px;color:var(--lavd);font-size:.85rem;text-decoration:none;font-weight:600}
+.back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="lock">🔐</div>
+  <div class="logo">Shukarsh</div>
+  <div class="sub">Admin Panel</div>
+  %s
+  <form method="POST" action="/admin/login">
+    <div class="field">
+      <input type="password" name="password" placeholder="Enter admin password" autofocus required>
+    </div>
+    <button type="submit" class="btn">Login →</button>
+  </form>
+  <a href="/" class="back">← Back to Store</a>
+</div>
+</body>
+</html>`,
+		func() string {
+			if errMsg != "" {
+				return `<div class="error">❌ ` + template.HTMLEscapeString(errMsg) + `</div>`
+			}
+			return ""
+		}())
+}
+
+func (s *Server) handleAdminLoginPost(w http.ResponseWriter, r *http.Request) {
+	password := r.FormValue("password")
+	if password != s.AdminPassword {
+		http.Redirect(w, r, "/admin/login?error=Wrong+password", http.StatusFound)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "admin_token",
+		Value:    s.adminToken(),
+		Path:     "/",
+		MaxAge:   86400 * 7, // 7 days
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
+	http.Redirect(w, r, "/admin", http.StatusFound)
+}
+
+func (s *Server) handleAdminLogout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   "admin_token",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	})
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 func (s *Server) handleAdmin(w http.ResponseWriter, r *http.Request) {

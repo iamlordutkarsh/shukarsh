@@ -8,7 +8,10 @@ import (
 	"srv.exe.dev/srv"
 )
 
-var flagListenAddr = flag.String("listen", ":8000", "address to listen on")
+var (
+	flagListenAddr  = flag.String("listen", ":8000", "address to listen on")
+	flagAdminPass   = flag.String("admin-password", "", "admin panel password (or ADMIN_PASSWORD env var)")
+)
 
 func main() {
 	if err := run(); err != nil {
@@ -22,7 +25,11 @@ func run() error {
 	if err != nil {
 		hostname = "unknown"
 	}
-	server, err := srv.New("db.sqlite3", hostname)
+	adminPass := *flagAdminPass
+	if adminPass == "" {
+		adminPass = os.Getenv("ADMIN_PASSWORD")
+	}
+	server, err := srv.New("db.sqlite3", hostname, adminPass)
 	if err != nil {
 		return fmt.Errorf("create server: %w", err)
 	}

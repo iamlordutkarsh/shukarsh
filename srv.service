@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 User=exedev
 WorkingDirectory=/home/exedev/shukarsh
+Environment=ADMIN_PASSWORD=shukarsh2026
 ExecStart=/home/exedev/shukarsh/shukarsh-server --listen :8000
 Restart=always
 RestartSec=2
