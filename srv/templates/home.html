@@ -108,7 +108,7 @@ footer p{font-size:.85rem;color:var(--txl)}
     {{range $i, $p := .Products}}
     <div class="card" style="animation-delay:{{$i}}00ms">
       {{if $p.ImageUrl}}
-        <img class="card-img" src="{{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🛍️</div>'">
+        <img class="card-img" src="/img?url={{$p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>🛍️</div>'">
       {{else}}
         <div class="card-img-placeholder">🛍️</div>
       {{end}}

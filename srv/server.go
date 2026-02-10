@@ -56,6 +56,7 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("POST /api/add", s.handleAddProduct)
 	mux.HandleFunc("POST /api/delete/{id}", s.handleDeleteProduct)
 	mux.HandleFunc("GET /api/products", s.handleListProducts)
+	mux.HandleFunc("GET /img", handleImageProxy)
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir(s.StaticDir))))
 	slog.Info("starting server", "addr", addr)
 	return http.ListenAndServe(addr, mux)
