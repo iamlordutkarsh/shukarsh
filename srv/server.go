@@ -292,13 +292,21 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 		featured = featured[:5]
 	}
 
+	// Dynamic stats
+	totalViews, _ := q.TotalViews(r.Context())
+	uniqueVisitors, _ := q.UniqueVisitors(r.Context())
+	waClicks, _ := q.TotalWAClicks(r.Context())
+
 	tmpl.Execute(w, map[string]any{
-		"Products":    products,
-		"Categories":  catOrder,
-		"ByCategory":  catMap,
-		"NewArrivals": newArrivals,
-		"BestSellers": bestSellers,
-		"Featured":    featured,
+		"Products":       products,
+		"Categories":     catOrder,
+		"ByCategory":     catMap,
+		"NewArrivals":    newArrivals,
+		"BestSellers":    bestSellers,
+		"Featured":       featured,
+		"TotalViews":     totalViews,
+		"UniqueVisitors": uniqueVisitors,
+		"WAClicks":       waClicks,
 	})
 }
 

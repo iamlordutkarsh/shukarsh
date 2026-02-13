@@ -380,8 +380,8 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
       <p>Your go-to destination for quality products at best prices 💜</p>
       <div class="hero-stats">
         <div class="hero-stat"><strong>{{len .Products}}+</strong><small>Products</small></div>
-        <div class="hero-stat"><strong>4.0★</strong><small>Rating</small></div>
-        <div class="hero-stat"><strong>136+</strong><small>Reviews</small></div>
+        <div class="hero-stat"><strong>{{len .Categories}}</strong><small>Categories</small></div>
+        <div class="hero-stat"><strong>{{.TotalViews}}+</strong><small>Visitors</small></div>
         <div class="hero-stat"><strong>Pan India</strong><small>Delivery</small></div>
       </div>
     </div>
