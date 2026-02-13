@@ -105,6 +105,21 @@ func (s *Server) setUpDatabase(dbPath string) error {
 	return nil
 }
 
+func (s *Server) trackView(r *http.Request, productID *int64) {
+	q := dbgen.New(s.DB)
+	visitorID := ""
+	if c, err := r.Cookie("vid"); err == nil {
+		visitorID = c.Value
+	}
+	q.InsertPageView(r.Context(), dbgen.InsertPageViewParams{
+		Path:      r.URL.Path,
+		ProductID: productID,
+		Referrer:  r.Referer(),
+		UserAgent: r.UserAgent(),
+		VisitorID: visitorID,
+	})
+}
+
 func (s *Server) Serve(addr string) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /{$}", s.handleHome)
@@ -112,6 +127,8 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("GET /search", s.handleSearch)
 	mux.HandleFunc("GET /category/{name}", s.handleCategory)
 	mux.HandleFunc("GET /admin", s.requireAdmin(s.handleAdmin))
+	mux.HandleFunc("GET /admin/analytics", s.requireAdmin(s.handleAnalytics))
+	mux.HandleFunc("POST /api/wa-click", s.handleWAClick)
 	mux.HandleFunc("GET /admin/login", s.handleAdminLogin)
 	mux.HandleFunc("POST /admin/login", s.handleAdminLoginPost)
 	mux.HandleFunc("GET /admin/logout", s.handleAdminLogout)
@@ -149,6 +166,14 @@ func parsePrice(s string) float64 {
 var funcMap = template.FuncMap{
 	"lower": strings.ToLower,
 	"mul": func(a, b int) int { return a * b },
+	"discountPct": func(price, origPrice string) int {
+		p := parsePrice(price)
+		o := parsePrice(origPrice)
+		if o <= 0 || p <= 0 || o <= p {
+			return 0
+		}
+		return int(((o - p) / o) * 100)
+	},
 	"catEmoji": func(cat string) string {
 		switch cat {
 		case "Nails & Beauty":
@@ -217,6 +242,7 @@ var funcMap = template.FuncMap{
 }
 
 func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
+	go s.trackView(r, nil)
 	q := dbgen.New(s.DB)
 	products, err := q.ListProducts(r.Context())
 	if err != nil {
@@ -291,6 +317,7 @@ func (s *Server) handleProductDetail(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid product ID", 400)
 		return
 	}
+	go s.trackView(r, &id)
 	q := dbgen.New(s.DB)
 	product, err := q.GetProduct(r.Context(), id)
 	if err != nil {
@@ -337,6 +364,7 @@ func (s *Server) handleProductDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
+	go s.trackView(r, nil)
 	query := r.URL.Query().Get("q")
 	var products []dbgen.Product
 	if query != "" {
@@ -362,6 +390,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleCategory(w http.ResponseWriter, r *http.Request) {
+	go s.trackView(r, nil)
 	catName := r.PathValue("name")
 	q := dbgen.New(s.DB)
 	products, _ := q.ListProductsByCategory(r.Context(), catName)
@@ -397,6 +426,57 @@ func (s *Server) handleCategory(w http.ResponseWriter, r *http.Request) {
 		"Count":      len(products),
 		"Sort":       sort,
 		"Categories": categories,
+	})
+}
+
+func (s *Server) handleWAClick(w http.ResponseWriter, r *http.Request) {
+	q := dbgen.New(s.DB)
+	var pid *int64
+	if v := r.FormValue("product_id"); v != "" {
+		if id, err := strconv.ParseInt(v, 10, 64); err == nil {
+			pid = &id
+		}
+	}
+	clickType := r.FormValue("type")
+	if clickType == "" {
+		clickType = "order"
+	}
+	q.InsertWAClick(r.Context(), dbgen.InsertWAClickParams{ProductID: pid, ClickType: clickType})
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"ok":true}`))
+}
+
+func (s *Server) handleAnalytics(w http.ResponseWriter, r *http.Request) {
+	q := dbgen.New(s.DB)
+	viewsPerDay, _ := q.ViewsPerDay(r.Context())
+	topProducts, _ := q.TopProducts(r.Context())
+	totalViews, _ := q.TotalViews(r.Context())
+	todayViews, _ := q.TodayViews(r.Context())
+	totalWA, _ := q.TotalWAClicks(r.Context())
+	todayWA, _ := q.TodayWAClicks(r.Context())
+	uniqueVisitors, _ := q.UniqueVisitors(r.Context())
+	waByType, _ := q.WAClicksByType(r.Context())
+	productCount := 0
+	if products, err := q.ListProducts(r.Context()); err == nil {
+		productCount = len(products)
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tmpl, err := template.New("analytics.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "analytics.html"))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	tmpl.Execute(w, map[string]any{
+		"ViewsPerDay":    viewsPerDay,
+		"TopProducts":    topProducts,
+		"TotalViews":     totalViews,
+		"TodayViews":     todayViews,
+		"TotalWA":        totalWA,
+		"TodayWA":        todayWA,
+		"UniqueVisitors": uniqueVisitors,
+		"WAByType":       waByType,
+		"ProductCount":   productCount,
 	})
 }
 

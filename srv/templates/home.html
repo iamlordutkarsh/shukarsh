@@ -293,9 +293,12 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
 /* SPECIAL SECTIONS */
 .special-section{max-width:1300px;margin:0 auto;padding:40px 40px 10px}
 .special-section .section-header{margin-bottom:24px}
-.special-tag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:12px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;position:absolute;top:12px;right:12px;z-index:2;backdrop-filter:blur(4px)}
-.tag-new{background:rgba(72,199,142,.9);color:#fff}
-.tag-best{background:rgba(255,183,77,.9);color:#fff}
+.special-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:12px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;position:absolute;top:12px;right:12px;z-index:2;backdrop-filter:blur(4px);animation:badge-pulse 2s ease-in-out infinite}
+.tag-new{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#fff;box-shadow:0 2px 12px rgba(67,233,123,.4)}
+.tag-best{background:linear-gradient(135deg,#f5af19,#f12711);color:#fff;box-shadow:0 2px 12px rgba(241,39,17,.3)}
+.tag-sale{background:linear-gradient(135deg,#e8729a,#d946ef);color:#fff;box-shadow:0 2px 12px rgba(217,70,239,.3);position:absolute;top:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:12px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;backdrop-filter:blur(4px);animation:badge-pulse 2s ease-in-out infinite .5s}
+.tag-sale.with-new,.tag-sale.with-best{top:auto;bottom:12px}
+@keyframes badge-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 .special-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
 @media(max-width:900px){.special-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.special-section{padding:24px 16px 10px}.special-grid{gap:10px}}
@@ -423,6 +426,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
         {{if $p.ImageUrl}}<img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">{{else}}<div class="card-ph">🛍️</div>{{end}}
         <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
         <div class="special-tag tag-new">✨ NEW</div>
+        {{if and $p.OriginalPrice (gt (discountPct $p.Price $p.OriginalPrice) 0)}}<div class="tag-sale with-new">{{discountPct $p.Price $p.OriginalPrice}}% OFF</div>{{end}}
       </div>
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
@@ -449,6 +453,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
         {{if $p.ImageUrl}}<img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">{{else}}<div class="card-ph">🛍️</div>{{end}}
         <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
         <div class="special-tag tag-best">🔥 BEST</div>
+        {{if and $p.OriginalPrice (gt (discountPct $p.Price $p.OriginalPrice) 0)}}<div class="tag-sale with-best">{{discountPct $p.Price $p.OriginalPrice}}% OFF</div>{{end}}
       </div>
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
@@ -503,6 +508,9 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
         <div class="card-ph">🛍️</div>
         {{end}}
         <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
+        {{if eq $p.IsNew 1}}<div class="special-tag tag-new">✨ NEW</div>{{end}}
+        {{if eq $p.IsBestseller 1}}<div class="special-tag tag-best{{if eq $p.IsNew 1}} with-new{{end}}">🔥 BEST</div>{{end}}
+        {{if and $p.OriginalPrice (gt (discountPct $p.Price $p.OriginalPrice) 0)}}<div class="tag-sale{{if eq $p.IsNew 1}} with-new{{else if eq $p.IsBestseller 1}} with-best{{end}}">{{discountPct $p.Price $p.OriginalPrice}}% OFF</div>{{end}}
         <div class="card-wishlist" onclick="event.preventDefault();event.stopPropagation();toggleWish(this)">♡</div>
       </div>
       <div class="card-body">
@@ -529,7 +537,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
 <div class="bulk-banner">
   <h3>📦 Bulk Orders? Let's Talk!</h3>
   <p>Need 10+ pieces? Get special wholesale pricing. Drop us a message!</p>
-  <a href="https://wa.me/917668792739?text=Hi%20👋%20I'm%20interested%20in%20bulk%20ordering%20from%20Shukarsh%20Enterprises.%20Please%20share%20wholesale%20pricing." target="_blank" class="bulk-btn">
+  <a href="https://wa.me/917668792739?text=Hi%20👋%20I'm%20interested%20in%20bulk%20ordering%20from%20Shukarsh%20Enterprises.%20Please%20share%20wholesale%20pricing." target="_blank" class="bulk-btn" onclick="fetch('/api/wa-click',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'type=bulk'})">
     <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     WhatsApp for Bulk Orders
   </a>
@@ -700,6 +708,9 @@ function toggleDark(){
   const saved=localStorage.getItem('theme');
   if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeToggle').textContent='\u2600\uFE0F';}
 })();
+
+// Visitor ID cookie
+if(!document.cookie.match(/vid=/)){document.cookie='vid='+Math.random().toString(36).slice(2)+Date.now().toString(36)+';path=/;max-age=31536000';}
 
 // PWA
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js').catch(()=>{});}

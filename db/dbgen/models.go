@@ -14,6 +14,16 @@ type Migration struct {
 	ExecutedAt      time.Time `json:"executed_at"`
 }
 
+type PageView struct {
+	ID        int64     `json:"id"`
+	Path      string    `json:"path"`
+	ProductID *int64    `json:"product_id"`
+	Referrer  string    `json:"referrer"`
+	UserAgent string    `json:"user_agent"`
+	VisitorID string    `json:"visitor_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 type Product struct {
 	ID              int64     `json:"id"`
 	Url             string    `json:"url"`
@@ -37,4 +47,11 @@ type Visitor struct {
 	ViewCount int64     `json:"view_count"`
 	CreatedAt time.Time `json:"created_at"`
 	LastSeen  time.Time `json:"last_seen"`
+}
+
+type WaClick struct {
+	ID        int64     `json:"id"`
+	ProductID *int64    `json:"product_id"`
+	ClickType string    `json:"click_type"`
+	CreatedAt time.Time `json:"created_at"`
 }

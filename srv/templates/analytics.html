@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Analytics | Shukarsh Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf0e4;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--green:#25D366;--pink:#e8729a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+nav{background:var(--white);padding:18px 40px;box-shadow:0 2px 20px rgba(0,0,0,.04);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
+.nav-links{display:flex;gap:12px}
+.nav-btn{padding:10px 20px;border-radius:50px;font-size:.82rem;font-weight:700;border:2px solid var(--lavl);color:var(--lavd);transition:all .3s}
+.nav-btn:hover{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+.nav-btn.active{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+
+.container{max-width:1200px;margin:0 auto;padding:32px 40px 60px}
+.page-title{font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:8px}
+.page-sub{color:var(--textl);margin-bottom:32px}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:40px}
+.stat{background:var(--white);border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.04);transition:transform .3s}
+.stat:hover{transform:translateY(-4px)}
+.stat-icon{font-size:2rem;margin-bottom:8px}
+.stat-value{font-family:'DM Serif Display',serif;font-size:2.4rem;color:var(--lavd);line-height:1}
+.stat-label{font-size:.78rem;font-weight:700;color:var(--textl);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.stat-sub{font-size:.75rem;color:var(--lavd);font-weight:700;margin-top:4px}
+
+/* CHART */
+.chart-card{background:var(--white);border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.04);margin-bottom:32px}
+.chart-title{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px}
+.chart{display:flex;align-items:flex-end;gap:4px;height:200px;padding:0 4px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--lavd),#c9b3e8);min-height:4px;transition:height .6s cubic-bezier(.22,1,.36,1);position:relative;cursor:pointer}
+.bar:hover{opacity:.85}
+.bar-tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--text);color:var(--white);padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:700;white-space:nowrap;z-index:10}
+.bar:hover .bar-tooltip{display:block}
+.bar-label{font-size:.6rem;color:var(--textl);font-weight:700;writing-mode:vertical-rl;text-orientation:mixed;height:50px;overflow:hidden}
+
+/* TOP PRODUCTS */
+.top-products{background:var(--white);border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.04);margin-bottom:32px}
+.top-title{font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:20px}
+.top-list{display:flex;flex-direction:column;gap:12px}
+.top-item{display:flex;align-items:center;gap:16px;padding:12px 16px;background:var(--lavp);border-radius:14px;transition:all .3s}
+.top-item:hover{background:var(--lavl);transform:translateX(4px)}
+.top-rank{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--lavd);width:36px;text-align:center}
+.top-img{width:48px;height:48px;border-radius:12px;object-fit:cover;background:var(--lavl)}
+.top-info{flex:1}
+.top-name{font-weight:700;font-size:.9rem}
+.top-views{font-size:.8rem;color:var(--lavd);font-weight:700}
+.top-bar{height:6px;background:var(--lavl);border-radius:3px;overflow:hidden;margin-top:4px;width:100%;max-width:200px}
+.top-bar-fill{height:100%;background:linear-gradient(90deg,var(--lavd),var(--pink));border-radius:3px;transition:width .6s}
+
+/* WA STATS */
+.wa-card{background:linear-gradient(135deg,#25D366,#128C7E);border-radius:20px;padding:28px;color:#fff;margin-bottom:32px}
+.wa-card .chart-title{color:#fff}
+.wa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.wa-stat{text-align:center;padding:20px;background:rgba(255,255,255,.15);border-radius:14px;backdrop-filter:blur(4px)}
+.wa-stat-value{font-family:'DM Serif Display',serif;font-size:2rem}
+.wa-stat-label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;opacity:.8;margin-top:4px}
+
+.empty-state{text-align:center;padding:40px;color:var(--textl)}
+.empty-state h3{font-family:'DM Serif Display',serif;margin-bottom:8px}
+
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.wa-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.stats{grid-template-columns:1fr}.container{padding:20px 16px}nav{padding:14px 20px}.chart{height:150px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Shukarsh ✿</a>
+    <div class="nav-links">
+      <a href="/admin" class="nav-btn">📋 Admin</a>
+      <a href="/admin/analytics" class="nav-btn active">📊 Analytics</a>
+      <a href="/" class="nav-btn">🏠 Store</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">📊 Analytics Dashboard</h1>
+  <p class="page-sub">Track your store performance — last 30 days</p>
+
+  <!-- STAT CARDS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-icon">👁️</div>
+      <div class="stat-value">{{.TotalViews}}</div>
+      <div class="stat-label">Total Page Views</div>
+      <div class="stat-sub">{{.TodayViews}} today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value">{{.UniqueVisitors}}</div>
+      <div class="stat-label">Unique Visitors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">📦</div>
+      <div class="stat-value">{{.ProductCount}}</div>
+      <div class="stat-label">Products Listed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">📱</div>
+      <div class="stat-value">{{.TotalWA}}</div>
+      <div class="stat-label">WhatsApp Clicks</div>
+      <div class="stat-sub">{{.TodayWA}} today</div>
+    </div>
+  </div>
+
+  <!-- VIEWS CHART -->
+  <div class="chart-card">
+    <div class="chart-title">📈 Page Views (Last 30 Days)</div>
+    {{if .ViewsPerDay}}
+    <div class="chart" id="chart">
+      {{range .ViewsPerDay}}
+      <div class="bar-wrap">
+        <div class="bar" data-views="{{.Views}}" style="height:0">
+          <div class="bar-tooltip">{{.Views}} views</div>
+        </div>
+        <div class="bar-label">{{.Day}}</div>
+      </div>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <h3>No data yet 💭</h3>
+      <p>Views will appear here as visitors browse your store</p>
+    </div>
+    {{end}}
+  </div>
+
+  <!-- WHATSAPP STATS -->
+  <div class="wa-card">
+    <div class="chart-title">📱 WhatsApp Engagement</div>
+    <div class="wa-grid">
+      <div class="wa-stat">
+        <div class="wa-stat-value">{{.TotalWA}}</div>
+        <div class="wa-stat-label">Total Clicks</div>
+      </div>
+      {{range .WAByType}}
+      <div class="wa-stat">
+        <div class="wa-stat-value">{{.Clicks}}</div>
+        <div class="wa-stat-label">{{.ClickType}}</div>
+      </div>
+      {{end}}
+    </div>
+  </div>
+
+  <!-- TOP PRODUCTS -->
+  <div class="top-products">
+    <div class="top-title">🏆 Top Viewed Products</div>
+    {{if .TopProducts}}
+    <div class="top-list">
+      {{range $i, $p := .TopProducts}}
+      <a href="/product/{{$p.ID}}" class="top-item">
+        <div class="top-rank">#{{add $i 1}}</div>
+        {{if $p.ImageUrl}}<img class="top-img" src="{{imgSrc $p.ImageUrl}}" alt="" loading="lazy">{{end}}
+        <div class="top-info">
+          <div class="top-name">{{$p.Title}}</div>
+          <div class="top-views">{{$p.Views}} views</div>
+          <div class="top-bar"><div class="top-bar-fill" data-pct="{{$p.Views}}"></div></div>
+        </div>
+      </a>
+      {{end}}
+    </div>
+    {{else}}
+    <div class="empty-state">
+      <h3>No product views yet 💭</h3>
+      <p>Product analytics will appear once visitors start browsing</p>
+    </div>
+    {{end}}
+  </div>
+</div>
+
+<script>
+// Animate chart bars
+const bars = document.querySelectorAll('.bar');
+if(bars.length) {
+  const max = Math.max(...[...bars].map(b => +b.dataset.views));
+  setTimeout(() => {
+    bars.forEach(b => {
+      const pct = max > 0 ? (+b.dataset.views / max * 100) : 0;
+      b.style.height = Math.max(pct, 3) + '%';
+    });
+  }, 100);
+}
+
+// Animate top product bars
+const fills = document.querySelectorAll('.top-bar-fill');
+if(fills.length) {
+  const maxV = Math.max(...[...fills].map(f => +f.dataset.pct));
+  setTimeout(() => {
+    fills.forEach(f => {
+      const pct = maxV > 0 ? (+f.dataset.pct / maxV * 100) : 0;
+      f.style.width = pct + '%';
+    });
+  }, 200);
+}
+</script>
+</body>
+</html>
