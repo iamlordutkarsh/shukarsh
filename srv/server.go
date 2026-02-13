@@ -1,6 +1,7 @@
 package srv
 
 import (
+	"cmp"
 	"crypto/rand"
 	"crypto/sha256"
 	"database/sql"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strconv"
 	"strings"
 	"text/template"
@@ -100,6 +102,7 @@ func (s *Server) Serve(addr string) error {
 	mux.HandleFunc("GET /{$}", s.handleHome)
 	mux.HandleFunc("GET /product/{id}", s.handleProductDetail)
 	mux.HandleFunc("GET /search", s.handleSearch)
+	mux.HandleFunc("GET /category/{name}", s.handleCategory)
 	mux.HandleFunc("GET /admin", s.requireAdmin(s.handleAdmin))
 	mux.HandleFunc("GET /admin/login", s.handleAdminLogin)
 	mux.HandleFunc("POST /admin/login", s.handleAdminLoginPost)
@@ -123,8 +126,21 @@ func (s *Server) Serve(addr string) error {
 	return http.ListenAndServe(addr, mux)
 }
 
+// parsePrice extracts a numeric price from strings like "₹370", "Rs. 1,234", etc.
+func parsePrice(s string) float64 {
+	var buf strings.Builder
+	for _, c := range s {
+		if (c >= '0' && c <= '9') || c == '.' {
+			buf.WriteRune(c)
+		}
+	}
+	v, _ := strconv.ParseFloat(buf.String(), 64)
+	return v
+}
+
 var funcMap = template.FuncMap{
 	"lower": strings.ToLower,
+	"mul": func(a, b int) int { return a * b },
 	"catEmoji": func(cat string) string {
 		switch cat {
 		case "Nails & Beauty":
@@ -334,6 +350,45 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		"Query":    query,
 		"Products": products,
 		"Count":    len(products),
+	})
+}
+
+func (s *Server) handleCategory(w http.ResponseWriter, r *http.Request) {
+	catName := r.PathValue("name")
+	q := dbgen.New(s.DB)
+	products, _ := q.ListProductsByCategory(r.Context(), catName)
+	categories, _ := q.ListCategories(r.Context())
+
+	sort := r.URL.Query().Get("sort")
+	switch sort {
+	case "price-asc":
+		slices.SortFunc(products, func(a, b dbgen.Product) int {
+			return cmp.Compare(parsePrice(a.Price), parsePrice(b.Price))
+		})
+	case "price-desc":
+		slices.SortFunc(products, func(a, b dbgen.Product) int {
+			return cmp.Compare(parsePrice(b.Price), parsePrice(a.Price))
+		})
+	case "newest":
+		// already sorted by added_at DESC from query
+	case "bestseller":
+		slices.SortFunc(products, func(a, b dbgen.Product) int {
+			return cmp.Compare(b.IsBestseller, a.IsBestseller)
+		})
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	tmpl, err := template.New("category.html").Funcs(funcMap).ParseFiles(filepath.Join(s.TemplatesDir, "category.html"))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	tmpl.Execute(w, map[string]any{
+		"Category":   catName,
+		"Products":   products,
+		"Count":      len(products),
+		"Sort":       sort,
+		"Categories": categories,
 	})
 }
 

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{{catEmoji .Category}} {{.Category}} | Shukarsh ✿</title>
+<meta name="description" content="Browse {{.Category}} products on Shukarsh Enterprises – quality products at best prices">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&family=Satisfy&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf0e4;--bg2:#f3e4d0;--lav:#c9b3e8;--lavd:#a78bca;--lavl:#e8ddf5;--lavp:#f0eaf8;--text:#2c2137;--textl:#6b5e7b;--white:#fff;--r:16px}
+[data-theme=dark]{--bg:#1a1225;--bg2:#231832;--lav:#5a4478;--lavd:#b89edb;--lavl:#2d2042;--lavp:#261b36;--text:#e8ddf5;--textl:#a898bc;--white:#231832}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}img{display:block}
+::selection{background:var(--lavl)}
+
+/* NAV */
+nav{background:var(--bg);padding:18px 40px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.04)}
+.nav-inner{max-width:1300px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.logo{font-family:'Satisfy',cursive;font-size:2rem;color:var(--lavd)}
+.nav-links{display:flex;gap:8px;margin-left:auto;align-items:center}
+.nav-btn{padding:10px 22px;border-radius:50px;font-size:.82rem;font-weight:700;border:2px solid var(--lavl);color:var(--lavd);transition:all .3s}
+.nav-btn:hover{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+.nav-btn.active{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+.theme-btn{width:40px;height:40px;border-radius:50%;border:2px solid var(--lavl);background:none;font-size:1.1rem;cursor:pointer;transition:all .3s}
+.theme-btn:hover{border-color:var(--lavd);transform:scale(1.1)}
+
+/* HERO */
+.cat-hero{max-width:1300px;margin:0 auto;padding:48px 40px 20px;text-align:center}
+.cat-hero .emoji{font-size:3.5rem;margin-bottom:12px;display:block;animation:bounce-in .6s cubic-bezier(.68,-.55,.27,1.55) both}
+.cat-hero h1{font-family:'DM Serif Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);margin-bottom:8px}
+.cat-hero p{color:var(--textl);font-size:1.05rem}
+.cat-hero .count{display:inline-block;margin-top:12px;padding:6px 18px;background:var(--lavl);border-radius:20px;font-size:.85rem;font-weight:700;color:var(--lavd)}
+
+/* CATEGORY NAV PILLS */
+.cat-nav{max-width:1300px;margin:0 auto;padding:0 40px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+.cat-pill{padding:10px 20px;border-radius:50px;font-size:.82rem;font-weight:700;background:var(--white);color:var(--textl);border:2px solid var(--lavl);transition:all .3s;cursor:pointer}
+.cat-pill:hover{border-color:var(--lavd);color:var(--lavd)}
+.cat-pill.active{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+
+/* SORT BAR */
+.sort-bar{max-width:1300px;margin:0 auto;padding:24px 40px 0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sort-bar label{font-size:.82rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--textl)}
+.sort-pill{padding:8px 18px;border-radius:50px;font-size:.8rem;font-weight:700;background:var(--white);color:var(--textl);border:2px solid var(--lavl);cursor:pointer;transition:all .3s}
+.sort-pill:hover{border-color:var(--lavd);color:var(--lavd)}
+.sort-pill.active{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+
+/* GRID */
+.results{max-width:1300px;margin:0 auto;padding:24px 40px 60px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:var(--white);border-radius:20px;overflow:hidden;transition:all .45s cubic-bezier(.22,1,.36,1);cursor:pointer;display:flex;flex-direction:column;box-shadow:0 2px 12px rgba(0,0,0,.04);opacity:0;transform:translateY(20px);animation:card-in .4s ease forwards}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(169,139,202,.15)}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover}
+.card-ph{width:100%;aspect-ratio:1;background:var(--lavp);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.card-body{padding:16px 18px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.card-title{font-size:.88rem;font-weight:700;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px;min-height:2.4em}
+.card-price{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--lavd)}
+.card-orig{font-size:.78rem;color:var(--textl);text-decoration:line-through;margin-top:2px}
+.card-badge{position:absolute;top:12px;left:12px;padding:5px 12px;border-radius:20px;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--white)}
+.card-badge.meesho{background:rgba(167,139,202,.85)}
+.card-badge.amazon{background:rgba(255,153,0,.85)}
+.card-img-wrap{position:relative;overflow:hidden;border-radius:20px 20px 0 0}
+.card-tags{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.tag{font-size:.65rem;padding:3px 10px;border-radius:12px;font-weight:700}
+.tag-new{background:#e8f5e9;color:#2e7d32}
+.tag-best{background:#fff3e0;color:#e65100}
+.card-btn{display:inline-block;margin-top:10px;padding:8px 20px;border:2px solid var(--lavl);border-radius:50px;font-size:.78rem;font-weight:700;color:var(--lavd);transition:all .3s}
+.card:hover .card-btn{background:var(--lavd);color:var(--white);border-color:var(--lavd)}
+
+.empty{text-align:center;padding:60px 24px}
+.empty h3{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom:8px}
+.empty p{color:var(--textl)}
+
+/* FOOTER */
+footer{background:var(--lavl);padding:30px;text-align:center}
+.footer-logo{font-family:'Satisfy',cursive;font-size:1.4rem;color:var(--lavd);margin-bottom:4px}
+footer p{font-size:.78rem;color:var(--textl)}
+
+@keyframes bounce-in{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes card-in{to{opacity:1;transform:translateY(0)}}
+@keyframes page-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
+
+@media(max-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .results{padding:16px 16px 40px}
+  .cat-hero{padding:32px 16px 12px}
+  .cat-hero .emoji{font-size:2.5rem}
+  .sort-bar{padding:16px 16px 0}
+  .cat-nav{padding:0 16px}
+  nav{padding:14px 20px}
+  .nav-links .nav-btn:not(:last-child){display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo">Shukarsh ✿</a>
+    <div class="nav-links">
+      <a href="/" class="nav-btn">🏠 Home</a>
+      <a href="/search" class="nav-btn">🔍 Search</a>
+      <button class="theme-btn" id="themeToggle" onclick="toggleDark()">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<div class="cat-hero">
+  <span class="emoji">{{catEmoji .Category}}</span>
+  <h1>{{.Category}}</h1>
+  <p>Browse all products in this category</p>
+  <span class="count">{{.Count}} product{{if ne .Count 1}}s{{end}} found</span>
+</div>
+
+<!-- Category navigation -->
+<div class="cat-nav">
+  {{range .Categories}}
+  <a href="/category/{{.}}" class="cat-pill{{if eq . $.Category}} active{{end}}">{{catEmoji .}} {{.}}</a>
+  {{end}}
+</div>
+
+{{if .Products}}
+<!-- Sort bar -->
+<div class="sort-bar">
+  <label>Sort ✿</label>
+  <a href="/category/{{.Category}}" class="sort-pill{{if eq .Sort ""}} active{{end}}">Default</a>
+  <a href="/category/{{.Category}}?sort=price-asc" class="sort-pill{{if eq .Sort "price-asc"}} active{{end}}">Price: Low→High</a>
+  <a href="/category/{{.Category}}?sort=price-desc" class="sort-pill{{if eq .Sort "price-desc"}} active{{end}}">Price: High→Low</a>
+  <a href="/category/{{.Category}}?sort=newest" class="sort-pill{{if eq .Sort "newest"}} active{{end}}">✨ Newest</a>
+  <a href="/category/{{.Category}}?sort=bestseller" class="sort-pill{{if eq .Sort "bestseller"}} active{{end}}">🔥 Best Sellers</a>
+</div>
+{{end}}
+
+<div class="results">
+  {{if .Products}}
+  <div class="grid">
+    {{range $i, $p := .Products}}
+    <a href="/product/{{$p.ID}}" class="card" style="animation-delay:{{mul $i 60}}ms">
+      <div class="card-img-wrap">
+        {{if $p.ImageUrl}}
+        <img class="card-img" src="{{imgSrc $p.ImageUrl}}" alt="{{$p.Title}}" loading="lazy" onerror="this.outerHTML='<div class=card-ph>🛍️</div>'">
+        {{else}}
+        <div class="card-ph">🛍️</div>
+        {{end}}
+        <div class="card-badge {{$p.Platform | lower}}">{{$p.Platform}}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{$p.Title}}</div>
+        <div>
+          {{if $p.Price}}<div class="card-price">{{$p.Price}}</div>{{end}}
+          {{if and $p.OriginalPrice (ne $p.OriginalPrice $p.Price)}}<div class="card-orig">{{$p.OriginalPrice}}</div>{{end}}
+        </div>
+        <div class="card-tags">
+          {{if eq $p.IsNew 1}}<span class="tag tag-new">✨ New</span>{{end}}
+          {{if eq $p.IsBestseller 1}}<span class="tag tag-best">🔥 Best</span>{{end}}
+        </div>
+        <span class="card-btn">View Details →</span>
+      </div>
+    </a>
+    {{end}}
+  </div>
+  {{else}}
+  <div class="empty">
+    <h3>No products yet in {{.Category}} 😟</h3>
+    <p>Check back soon — we're adding new items all the time!</p>
+  </div>
+  {{end}}
+</div>
+
+<footer>
+  <div class="footer-logo">Shukarsh ✿</div>
+  <p>© 2025 Shukarsh Enterprises. Made with 💜</p>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('page-enter'));
+
+function toggleDark(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'':'dark');
+  localStorage.setItem('theme',isDark?'light':'dark');
+  document.getElementById('themeToggle').textContent=isDark?'\u{1F319}':'\u2600\uFE0F';
+}
+(function(){
+  const saved=localStorage.getItem('theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');document.getElementById('themeToggle').textContent='\u2600\uFE0F';}
+})();
+</script>
+</body>
+</html>

@@ -477,7 +477,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
 <div class="section cat-sec" data-cat="{{.}}">
   <div class="section-header reveal">
     <h2 class="section-title" id="cat-{{. | lower}}">{{catEmoji .}} {{.}}</h2>
-    <span class="view-all" onclick="filterCat('{{.}}',null)">View all →</span>
+    <a href="/category/{{.}}" class="view-all">View all →</a>
   </div>
   <div class="grid">
     {{range $i, $p := index $.ByCategory .}}
@@ -519,7 +519,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
     </div>
     <div>
       <h3>Shop</h3>
-      {{range .Categories}}<a href="#" onclick="filterCat('{{.}}',null);return false" style="display:block">{{.}}</a>{{end}}
+      {{range .Categories}}<a href="/category/{{.}}" style="display:block">{{.}}</a>{{end}}
     </div>
     <div>
       <h3>Find Us On</h3>
