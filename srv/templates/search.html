@@ -59,6 +59,10 @@ footer p{font-size:.78rem;color:var(--textl)}
 
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.results{padding:0 16px 40px}.search-hero{padding:40px 16px 24px}nav{padding:14px 20px}}
+@keyframes page-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes page-exit{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}
+body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
+body.page-exit{animation:page-exit .3s cubic-bezier(.25,.1,.25,1) both;pointer-events:none}
 </style>
 </head>
 <body>
@@ -133,5 +137,20 @@ footer p{font-size:.78rem;color:var(--textl)}
   <div class="footer-logo">Shukarsh ✿</div>
   <p>© 2025 Shukarsh Enterprises. Made with 💜</p>
 </footer>
+<script>
+document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('page-enter'));
+(function(){
+  document.addEventListener('click',function(e){
+    const link=e.target.closest('a[href]');
+    if(!link||link.target==='_blank'||link.origin!==location.origin||e.ctrlKey||e.metaKey||e.shiftKey) return;
+    e.preventDefault();
+    const href=link.href;
+    document.body.classList.remove('page-enter');
+    document.body.classList.add('page-exit');
+    document.body.addEventListener('animationend',()=>{window.location.href=href},{once:true});
+    setTimeout(()=>{window.location.href=href},350);
+  });
+})();
+</script>
 </body>
 </html>

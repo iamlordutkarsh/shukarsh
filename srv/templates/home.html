@@ -237,6 +237,41 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .ig-fab .ig-tooltip{position:absolute;right:68px;background:var(--card);color:var(--text);padding:8px 14px;border-radius:12px;font-size:.82rem;font-weight:600;white-space:nowrap;box-shadow:0 2px 12px rgba(0,0,0,.12);opacity:0;pointer-events:none;transition:opacity .3s}
 .ig-fab:hover .ig-tooltip{opacity:1}
 .footer-logo{font-family:'Satisfy',cursive;font-size:1.6rem;color:var(--lavd);margin-bottom:10px}
+/* ===== SORT BAR ===== */
+.sort-bar{max-width:1300px;margin:0 auto;padding:18px 40px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:64px;z-index:50;background:var(--bg);transition:background .3s}
+.sort-bar::after{content:'';position:absolute;bottom:-12px;left:0;right:0;height:12px;background:linear-gradient(var(--bg),transparent);pointer-events:none}
+.sort-label{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--textl);margin-right:4px;white-space:nowrap}
+.sort-pill{padding:7px 18px;border-radius:20px;border:2px solid var(--lavl);background:var(--white);color:var(--textl);font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;transition:all .35s cubic-bezier(.22,1,.36,1);white-space:nowrap;outline:none;user-select:none}
+.sort-pill:hover{border-color:var(--lavd);color:var(--lavd);transform:translateY(-2px);box-shadow:0 4px 14px rgba(169,139,202,.15)}
+.sort-pill.active{background:var(--lavd);color:var(--white);border-color:var(--lavd);box-shadow:0 4px 16px rgba(169,139,202,.25)}
+.sort-pill.active:hover{background:var(--lav);border-color:var(--lav);transform:translateY(-2px)}
+#sorted-grid-wrap{max-width:1300px;margin:0 auto;padding:20px 40px 50px;display:none}
+#sorted-grid-wrap .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+#sorted-grid-wrap .section-title{font-family:'DM Serif Display',serif;font-size:1.8rem}
+#sorted-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+@keyframes sortFadeIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card.sort-anim{animation:sortFadeIn .45s cubic-bezier(.22,1,.36,1) both}
+[data-theme="dark"] .sort-pill{background:var(--bg2);border-color:var(--lavl);color:var(--textl)}
+[data-theme="dark"] .sort-pill:hover{border-color:var(--lavd);color:var(--lavd)}
+[data-theme="dark"] .sort-pill.active{background:var(--lavd);color:#fff;border-color:var(--lavd)}
+/* ===== PAGE TRANSITIONS ===== */
+@keyframes page-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes page-exit{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}
+body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
+body.page-exit{animation:page-exit .3s cubic-bezier(.25,.1,.25,1) both;pointer-events:none}
+/* ===== RECENTLY VIEWED ===== */
+.recent-section{max-width:1300px;margin:0 auto;padding:30px 40px 10px}
+.recent-section .section-title{font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:20px}
+.recent-scroll{display:flex;gap:18px;overflow-x:auto;padding-bottom:12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.recent-scroll::-webkit-scrollbar{height:6px}
+.recent-scroll::-webkit-scrollbar-track{background:var(--lavl);border-radius:10px}
+.recent-scroll::-webkit-scrollbar-thumb{background:var(--lavd);border-radius:10px}
+.recent-card{flex:0 0 180px;scroll-snap-align:start;border-radius:var(--r);overflow:hidden;background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s;text-decoration:none;color:var(--text)}
+.recent-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(169,139,202,.18)}
+.recent-card img{width:100%;height:140px;object-fit:cover}
+.recent-card .rc-body{padding:10px 12px}
+.recent-card .rc-title{font-size:.78rem;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.recent-card .rc-price{font-size:.82rem;font-weight:800;color:var(--lavd);margin-top:4px}
 
 /* DARK MODE TOGGLE */
 .theme-toggle{width:40px;height:40px;border-radius:50%;background:var(--lavl);border:none;font-size:1.1rem;cursor:pointer;transition:all .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -262,7 +297,8 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 .empty{text-align:center;padding:80px 24px}
 .empty h3{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px}
 
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}.hero-slide--product{padding:30px 40px;gap:30px}.hero-slide--product .slide-img-wrap{flex:0 0 180px;height:180px}}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr}.hero-stats{gap:24px}.hero-slide--product{padding:30px 40px;gap:30px}.hero-slide--product .slide-img-wrap{flex:0 0 180px;height:180px}#sorted-grid{grid-template-columns:repeat(2,1fr)}.recent-section{padding:20px 16px 10px}.recent-card{flex:0 0 150px}.recent-card img{height:110px}}
+@media(max-width:600px){.sort-bar{padding:14px 16px 8px;gap:6px;top:52px}.sort-pill{padding:6px 13px;font-size:.7rem}.sort-label{font-size:.68rem}#sorted-grid-wrap{padding:16px 16px 30px}#sorted-grid{grid-template-columns:repeat(2,1fr);gap:10px}}
 @media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}.section{padding:30px 16px}.cat-row{gap:14px;padding:0 16px;justify-content:flex-start;flex-wrap:nowrap;width:max-content}.cat-circle{width:65px;height:65px;font-size:1.4rem}.card{border-radius:16px}.card-body{padding:12px 14px}.card-title{font-size:.8rem;min-height:2.2em}.card-link{padding:7px 16px;font-size:.7rem}.section-header{flex-direction:column;gap:10px;align-items:flex-start}
 .hero-carousel{border-radius:0 0 20px 20px}
 .hero-slide--welcome{padding:35px 16px}
@@ -412,6 +448,31 @@ footer{background:var(--lavl);padding:50px 40px 24px}
 </div>
 <div class="divider"></div>
 {{end}}
+
+<!-- RECENTLY VIEWED -->
+<div class="recent-section" id="recentlyViewed" style="display:none">
+  <h2 class="section-title reveal">🕐 Recently Viewed</h2>
+  <div class="recent-scroll" id="recentScroll"></div>
+</div>
+
+<!-- SORT/FILTER BAR -->
+<div class="sort-bar" id="sortBar">
+  <span class="sort-label">Sort ✿</span>
+  <button class="sort-pill active" onclick="sortProducts('default',this)">Default</button>
+  <button class="sort-pill" onclick="sortProducts('price-low',this)">Price: Low→High</button>
+  <button class="sort-pill" onclick="sortProducts('price-high',this)">Price: High→Low</button>
+  <button class="sort-pill" onclick="sortProducts('newest',this)">✨ Newest</button>
+  <button class="sort-pill" onclick="sortProducts('bestseller',this)">🔥 Best Sellers</button>
+</div>
+
+<!-- SORTED UNIFIED GRID (hidden by default) -->
+<div id="sorted-grid-wrap">
+  <div class="section-header">
+    <h2 class="section-title" id="sorted-grid-title">All Products</h2>
+    <span class="view-all" onclick="sortProducts('default',document.querySelector('.sort-pill'))">✕ Clear sort</span>
+  </div>
+  <div class="grid" id="sorted-grid"></div>
+</div>
 
 <!-- PRODUCT SECTIONS BY CATEGORY -->
 {{range .Categories}}
@@ -622,6 +683,8 @@ function toggleDark(){
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js').catch(()=>{});}
 
 function navToCat(cat){
+  // Reset sort to default first
+  sortProducts('default',document.querySelector('.sort-pill'));
   // Show only that category
   document.querySelectorAll('.cat-bubble').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.cat-sec').forEach(s=>{
@@ -641,6 +704,108 @@ function navToCat(cat){
   // Re-observe cards
   document.querySelectorAll('.card.reveal:not(.show)').forEach(c=>obs.observe(c));
 }
+
+// ===== SORT & FILTER =====
+(function(){
+  let _origSnap=null;
+  function snapOriginal(){
+    _origSnap=[];
+    document.querySelectorAll('.cat-sec .grid').forEach(grid=>{
+      grid.querySelectorAll('.card').forEach(card=>{
+        _origSnap.push(card.cloneNode(true));
+      });
+    });
+  }
+  function parsePrice(card){
+    const el=card.querySelector('.card-price');
+    if(!el) return 0;
+    const txt=el.childNodes[0]?.textContent||el.textContent;
+    return parseFloat(txt.replace(/[^0-9.]/g,''))||0;
+  }
+  function hasTag(card,cls){return !!card.querySelector('.'+cls)}
+  window.sortProducts=function(mode,btn){
+    if(!_origSnap) snapOriginal();
+    document.querySelectorAll('.sort-pill').forEach(p=>p.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    const catSecs=document.querySelectorAll('.cat-sec');
+    const dividers=document.querySelectorAll('.divider');
+    const sortedWrap=document.getElementById('sorted-grid-wrap');
+    const sortedGrid=document.getElementById('sorted-grid');
+    const sortedTitle=document.getElementById('sorted-grid-title');
+    const specials=document.querySelectorAll('.special-section');
+    if(mode==='default'){
+      sortedWrap.style.display='none';
+      sortedGrid.innerHTML='';
+      catSecs.forEach(s=>s.style.display='');
+      dividers.forEach(d=>d.style.display='');
+      specials.forEach(s=>s.style.display='');
+      document.querySelectorAll('.card.reveal:not(.show)').forEach(c=>obs.observe(c));
+      return;
+    }
+    catSecs.forEach(s=>s.style.display='none');
+    dividers.forEach(d=>d.style.display='none');
+    specials.forEach(s=>s.style.display='none');
+    let cards=_origSnap.map(c=>c.cloneNode(true));
+    switch(mode){
+      case 'price-low':cards.sort((a,b)=>parsePrice(a)-parsePrice(b));sortedTitle.textContent='Price: Low \u2192 High';break;
+      case 'price-high':cards.sort((a,b)=>parsePrice(b)-parsePrice(a));sortedTitle.textContent='Price: High \u2192 Low';break;
+      case 'newest':cards.sort((a,b)=>(hasTag(b,'tag-new')?1:0)-(hasTag(a,'tag-new')?1:0));sortedTitle.textContent='\u2728 Newest First';break;
+      case 'bestseller':cards.sort((a,b)=>(hasTag(b,'tag-best')?1:0)-(hasTag(a,'tag-best')?1:0));sortedTitle.textContent='\ud83d\udd25 Best Sellers First';break;
+    }
+    sortedGrid.innerHTML='';
+    cards.forEach((card,i)=>{
+      card.classList.remove('reveal');card.classList.add('show','sort-anim');
+      card.style.animationDelay=(i*40)+'ms';
+      sortedGrid.appendChild(card);
+    });
+    sortedWrap.style.display='block';
+    sortedGrid.querySelectorAll('.card').forEach(card=>{
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`translateY(-8px) scale(1.02) perspective(600px) rotateX(${-y*5}deg) rotateY(${x*5}deg)`;
+      });
+      card.addEventListener('mouseleave',()=>card.style.transform='');
+    });
+    sortedGrid.querySelectorAll('.card-wishlist').forEach(w=>{
+      w.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleWish(w)});
+    });
+    document.getElementById('sortBar').scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
+})();
+
+// ===== RECENTLY VIEWED =====
+(function(){
+  const KEY='shukarsh_recent';
+  const wrap=document.getElementById('recentlyViewed');
+  const scroll=document.getElementById('recentScroll');
+  if(!wrap||!scroll) return;
+  let items=[];
+  try{items=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){}
+  if(items.length===0) return;
+  wrap.style.display='';
+  items.forEach(item=>{
+    const a=document.createElement('a');
+    a.href='/product/'+item.id;
+    a.className='recent-card';
+    a.innerHTML='<img src="'+item.img+'" alt="'+item.title+'" loading="lazy" onerror="this.style.display=\'none\'"><div class="rc-body"><div class="rc-title">'+item.title+'</div><div class="rc-price">'+item.price+'</div></div>';
+    scroll.appendChild(a);
+  });
+})();
+
+// ===== PAGE TRANSITIONS =====
+document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('page-enter'));
+(function(){
+  document.addEventListener('click',function(e){
+    const link=e.target.closest('a[href]');
+    if(!link||link.target==='_blank'||link.origin!==location.origin||e.ctrlKey||e.metaKey||e.shiftKey) return;
+    e.preventDefault();
+    const href=link.href;
+    document.body.classList.remove('page-enter');
+    document.body.classList.add('page-exit');
+    document.body.addEventListener('animationend',()=>{window.location.href=href},{once:true});
+    setTimeout(()=>{window.location.href=href},350);
+  });
+})();
 </script>
 <a href="https://www.instagram.com/shukarsh_enterprises" target="_blank" class="ig-fab" aria-label="Follow us on Instagram">
   <span class="ig-tooltip">Follow us on Instagram 💜</span>

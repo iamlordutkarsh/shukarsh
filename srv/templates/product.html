@@ -185,6 +185,10 @@ footer p{font-size:.82rem;color:var(--textl)}
   .feature-text{font-size:.65rem}
   .related-section{padding:24px 16px 30px}
 }
+@keyframes page-enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes page-exit{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-12px)}}
+body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
+body.page-exit{animation:page-exit .3s cubic-bezier(.25,.1,.25,1) both;pointer-events:none}
 </style>
 </head>
 <body>
@@ -498,6 +502,33 @@ function showProductQR() {
   overlay.style.display = 'flex';
 }
 function closeProductQR() { document.getElementById('qrOverlay').style.display = 'none'; }
+
+// ===== TRACK RECENTLY VIEWED =====
+(function(){
+  const KEY='shukarsh_recent',MAX=10;
+  const product={id:{{.Product.ID}},title:{{.Product.Title | json}},price:{{.Product.Price | json}},img:'{{imgSrc .Product.ImageUrl}}'};
+  let items=[];
+  try{items=JSON.parse(localStorage.getItem(KEY))||[];}catch(e){}
+  items=items.filter(i=>i.id!==product.id);
+  items.unshift(product);
+  if(items.length>MAX)items=items.slice(0,MAX);
+  localStorage.setItem(KEY,JSON.stringify(items));
+})();
+
+// ===== PAGE TRANSITIONS =====
+document.addEventListener('DOMContentLoaded',()=>document.body.classList.add('page-enter'));
+(function(){
+  document.addEventListener('click',function(e){
+    const link=e.target.closest('a[href]');
+    if(!link||link.target==='_blank'||link.origin!==location.origin||e.ctrlKey||e.metaKey||e.shiftKey) return;
+    e.preventDefault();
+    const href=link.href;
+    document.body.classList.remove('page-enter');
+    document.body.classList.add('page-exit');
+    document.body.addEventListener('animationend',()=>{window.location.href=href},{once:true});
+    setTimeout(()=>{window.location.href=href},350);
+  });
+})();
 </script>
 
 <!-- QR Modal -->
