@@ -94,9 +94,9 @@ func (s *Server) setUpDatabase(dbPath string) error {
 	if err := db.RunMigrations(wdb); err != nil {
 		return fmt.Errorf("migrations: %w", err)
 	}
-	// Auto-seed: if products table is empty, re-run seed migration
+	// Auto-seed: if products table has fewer than the 20 seeded products, re-run seed
 	var count int
-	if err := wdb.QueryRow("SELECT COUNT(*) FROM products").Scan(&count); err == nil && count == 0 {
+	if err := wdb.QueryRow("SELECT COUNT(*) FROM products").Scan(&count); err == nil && count < 20 {
 		slog.Info("db: no products found, running seed")
 		if err := db.RunSeed(wdb); err != nil {
 			slog.Warn("db: seed failed", "error", err)
