@@ -113,3 +113,8 @@ func executeMigration(db *sql.DB, filename string) error {
 	}
 	return nil
 }
+
+// RunSeed re-runs the seed migration to populate default products.
+func RunSeed(db *sql.DB) error {
+	return executeMigration(db, "006-seed-products.sql")
+}
