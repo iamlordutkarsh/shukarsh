@@ -218,6 +218,16 @@ var funcMap = template.FuncMap{
 		b, _ := json.Marshal(v)
 		return string(b)
 	},
+	"fmtPrice": func(price string) string {
+		if price == "" {
+			return ""
+		}
+		p := strings.TrimSpace(price)
+		if strings.HasPrefix(p, "₹") || strings.HasPrefix(p, "Rs") {
+			return p
+		}
+		return "₹" + p
+	},
 	"imgSrc": func(url string) string {
 		if strings.HasPrefix(url, "/uploads/") || strings.HasPrefix(url, "/static/") {
 			return url

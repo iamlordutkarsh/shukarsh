@@ -397,7 +397,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
         {{else}}<span class="slide-badge feat">💜 Featured</span>{{end}}
         <div class="slide-title">{{$p.Title}}</div>
         <div class="slide-cat">{{$p.Category}}</div>
-        <div class="slide-price">{{$p.Price}}{{if $p.OriginalPrice}} <span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>
+        <div class="slide-price">{{fmtPrice $p.Price}}{{if $p.OriginalPrice}} <span class="old">{{fmtPrice $p.OriginalPrice}}</span>{{end}}</div>
         <span class="slide-cta">View Product →</span>
       </div>
     </a>
@@ -430,7 +430,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
       </div>
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
-        <div>{{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
+        <div>{{if $p.Price}}<div class="card-price">{{fmtPrice $p.Price}}{{if $p.OriginalPrice}}<span class="old">{{fmtPrice $p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
       </div>
     </a>
     {{end}}
@@ -457,7 +457,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
       </div>
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
-        <div>{{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
+        <div>{{if $p.Price}}<div class="card-price">{{fmtPrice $p.Price}}{{if $p.OriginalPrice}}<span class="old">{{fmtPrice $p.OriginalPrice}}</span>{{end}}</div>{{end}}<span class="card-link">View Details →</span></div>
       </div>
     </a>
     {{end}}
@@ -516,7 +516,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
         <div>
-          {{if $p.Price}}<div class="card-price">{{$p.Price}}{{if $p.OriginalPrice}}<span class="old">{{$p.OriginalPrice}}</span>{{end}}</div>{{end}}
+          {{if $p.Price}}<div class="card-price">{{fmtPrice $p.Price}}{{if $p.OriginalPrice}}<span class="old">{{fmtPrice $p.OriginalPrice}}</span>{{end}}</div>{{end}}
           <span class="card-link">View Details →</span>
         </div>
       </div>

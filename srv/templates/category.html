@@ -169,8 +169,8 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
       <div class="card-body">
         <div class="card-title">{{$p.Title}}</div>
         <div>
-          {{if $p.Price}}<div class="card-price">{{$p.Price}}</div>{{end}}
-          {{if and $p.OriginalPrice (ne $p.OriginalPrice $p.Price)}}<div class="card-orig">{{$p.OriginalPrice}}</div>{{end}}
+          {{if $p.Price}}<div class="card-price">{{fmtPrice $p.Price}}</div>{{end}}
+          {{if and $p.OriginalPrice (ne $p.OriginalPrice $p.Price)}}<div class="card-orig">{{fmtPrice $p.OriginalPrice}}</div>{{end}}
         </div>
         <div class="card-tags">
           {{if eq $p.IsNew 1}}<span class="tag tag-new">✨ New</span>{{end}}

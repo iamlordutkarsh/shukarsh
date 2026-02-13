@@ -109,7 +109,7 @@ body.page-enter{animation:page-enter .3s cubic-bezier(.25,.1,.25,1) both}
         </div>
         <div class="card-body">
           <div class="card-title">{{.Title}}</div>
-          {{if .Price}}<div class="card-price">{{.Price}}</div>{{end}}
+          {{if .Price}}<div class="card-price">{{fmtPrice .Price}}</div>{{end}}
         </div>
       </a>
       {{end}}
